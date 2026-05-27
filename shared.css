@@ -1,0 +1,443 @@
+/* ============================================================
+   INDICATE — SHARED STYLES
+   ============================================================ */
+
+/* Self-hosted fonts — no external request, DSGVO-compliant */
+@font-face {
+  font-family: 'Bebas Neue';
+  src: url('fonts/bebas-neue-latin-ext.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Bebas Neue';
+  src: url('fonts/bebas-neue-latin.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('fonts/space-mono-regular-latin-ext.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('fonts/space-mono-regular-latin.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('fonts/space-mono-bold-latin-ext.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('fonts/space-mono-bold-latin.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('fonts/space-mono-italic-latin-ext.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Space Mono';
+  src: url('fonts/space-mono-italic-latin.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  --red:      #e00000;
+  --red-glow: #ff2200;
+  --white:    #f0f0f0;
+  --grey:     #888;
+  --grey-dim: #333;
+  --black:    #000;
+  --font-head: 'Bebas Neue', sans-serif;
+  --font-body: 'Space Mono', monospace;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+
+/* ── NAVIGATION ── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.4rem 2.8rem;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  mix-blend-mode: difference;
+  transition: opacity 0.2s;
+}
+.nav-logo-img {
+  height: 30px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 0 3px rgba(255,255,255,0.3));
+  transition: filter 0.3s;
+}
+.nav-logo:hover { opacity: 1; }
+.nav-logo:hover .nav-logo-img {
+  filter:
+    drop-shadow(0 0 6px rgba(255,255,255,0.7))
+    drop-shadow(0 0 14px rgba(224,0,0,0.8));
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  mix-blend-mode: difference;
+}
+.nav-links a {
+  font-size: 0.62rem;
+  letter-spacing: 0.32em;
+  color: var(--white);
+  transition: opacity 0.2s;
+}
+.nav-links a:hover,
+.nav-links a.active { opacity: 0.4; }
+
+/* ── PAGE TRANSITION OVERLAY ── */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.45s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.page-transition.in  { clip-path: inset(0 0% 0 0);   pointer-events: all; }
+.page-transition.out { clip-path: inset(0 0% 0 100%); }
+
+.page-transition-label {
+  font-family: var(--font-head);
+  font-size: 10vw;
+  letter-spacing: 0.1em;
+  color: var(--white);
+  opacity: 0.08;
+  user-select: none;
+}
+
+/* ── SECTION BASE ── */
+.section {
+  padding: 8rem 2.8rem;
+  max-width: 1340px;
+  margin: 0 auto;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
+
+/* ── SELECTION ── */
+::selection { background: var(--red); color: #fff; }
+
+/* ── RESPONSIVE NAV ── */
+@media (max-width: 600px) {
+  .nav { padding: 1rem 1.4rem; }
+  .nav-links { gap: 1.4rem; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   PASSWORD OVERLAY
+══════════════════════════════════════════════════════════ */
+
+/* Veil: hides body while pw check runs (set by inline head script) */
+html.pw-lock body { visibility: hidden; }
+
+#pw-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: inset(0 0% 0 0);
+  transition: clip-path 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+#pw-overlay.pw-exit {
+  clip-path: inset(0 0 0 100%);
+}
+
+.pw-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  max-width: 400px;
+  padding: 0 2rem;
+}
+
+.pw-logo {
+  margin-bottom: 1.4rem;
+  display: flex;
+  justify-content: center;
+}
+.pw-logo-svg {
+  width: clamp(150px, 28vw, 250px);
+  height: auto;
+  display: block;
+  animation: logo-pulse 2.5s ease-in-out infinite;
+}
+@keyframes logo-pulse {
+  0%, 100% {
+    filter:
+      drop-shadow(0 0 0px rgba(255,255,255,0))
+      drop-shadow(0 0 12px rgba(224,0,0,0.4));
+  }
+  50% {
+    filter:
+      drop-shadow(0 0 8px rgba(255,255,255,0.6))
+      drop-shadow(0 0 40px rgba(224,0,0,1.0))
+      drop-shadow(0 0 80px rgba(180,0,0,0.6));
+  }
+}
+
+.pw-rule {
+  width: 40px;
+  height: 2px;
+  background: #e00000;
+  margin-bottom: 1.6rem;
+}
+
+.pw-hint {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.45em;
+  color: #555;
+  margin-bottom: 2.5rem;
+}
+
+.pw-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.4rem;
+  width: 100%;
+}
+
+#pw-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 1.4rem;
+  letter-spacing: 0.55em;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 0.5rem 0.5rem;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s;
+  caret-color: #e00000;
+}
+
+#pw-input:focus {
+  border-bottom-color: #e00000;
+}
+
+#pw-input::placeholder {
+  color: rgba(255,255,255,0.15);
+  letter-spacing: 0.4em;
+}
+
+#pw-submit {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.45em;
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.18);
+  padding: 0.8rem 2.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+#pw-submit:hover {
+  border-color: #e00000;
+  background: #e00000;
+}
+
+/* Shake on wrong password */
+@keyframes pw-shake {
+  0%,100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-5px); }
+  80%      { transform: translateX(5px); }
+}
+
+.pw-shake {
+  animation: pw-shake 0.35s ease;
+}
+
+.pw-error {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.35em;
+  color: #e00000;
+  margin-top: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.pw-error--visible {
+  opacity: 1;
+}
+
+.pw-legal {
+  position: absolute;
+  bottom: 2rem;
+  left: 0; right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+}
+.pw-legal a {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.45rem;
+  letter-spacing: 0.4em;
+  color: rgba(255,255,255,0.2);
+  transition: color 0.2s;
+}
+.pw-legal a:hover { color: rgba(255,255,255,0.6); }
+.pw-legal-sep {
+  width: 1px; height: 8px;
+  background: rgba(255,255,255,0.1);
+}
+
+/* ── LEGAL FOOTER BAR ── */
+.legal-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.55rem 2.8rem;
+  background: rgba(0,0,0,0.88);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255,255,255,0.04);
+}
+.legal-bar a {
+  font-family: var(--font-body);
+  font-size: 0.48rem;
+  letter-spacing: 0.4em;
+  color: rgba(255,255,255,0.22);
+  transition: color 0.2s;
+}
+.legal-bar a:hover { color: rgba(255,255,255,0.65); }
+.legal-bar-sep {
+  width: 1px;
+  height: 10px;
+  background: rgba(255,255,255,0.1);
+}
+
+/* ── LEGAL PAGE CONTENT ── */
+.legal-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 10rem 2.8rem 8rem;
+}
+.legal-page-title {
+  font-family: var(--font-head);
+  font-size: clamp(5rem, 12vw, 10rem);
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  margin-bottom: 0.6rem;
+}
+.legal-page-sub {
+  font-size: 0.58rem;
+  letter-spacing: 0.45em;
+  color: var(--red);
+  display: block;
+  margin-bottom: 4rem;
+}
+.legal-rule {
+  width: 40px;
+  height: 2px;
+  background: var(--red);
+  margin-bottom: 4rem;
+}
+.legal-section {
+  margin-bottom: 3.5rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 2rem;
+}
+.legal-section-title {
+  font-family: var(--font-head);
+  font-size: 1.6rem;
+  letter-spacing: 0.12em;
+  color: var(--white);
+  margin-bottom: 1.4rem;
+}
+.legal-section p,
+.legal-section address {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  line-height: 2.2;
+  color: rgba(255,255,255,0.55);
+  font-style: normal;
+}
+.legal-section a {
+  color: var(--red);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.legal-section a:hover { border-color: var(--red); }
+.legal-section .legal-label {
+  font-size: 0.52rem;
+  letter-spacing: 0.38em;
+  color: rgba(255,255,255,0.25);
+  display: block;
+  margin-bottom: 0.3rem;
+  margin-top: 1.2rem;
+}
+.legal-section .legal-label:first-child { margin-top: 0; }
+.legal-note {
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  line-height: 2;
+  color: rgba(255,255,255,0.25);
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.04);
+}

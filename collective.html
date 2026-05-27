@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INDICATE — Das Kollektiv</title>
+  <script>if(!sessionStorage.getItem('indicate_auth')){document.documentElement.classList.add('pw-lock')}</script>
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+
+    .collective-scroll {
+      height: 100vh; overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+    }
+    .collective-scroll::-webkit-scrollbar { display: none; }
+
+    /* ── HEADER ── */
+    .collective-header {
+      height: 100vh; scroll-snap-align: start;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 2.8rem 5rem;
+      position: relative; background: #000; overflow: hidden;
+    }
+    .collective-header::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 40%, rgba(180,0,0,0.1) 0%, transparent 60%);
+    }
+    .collective-page-title {
+      font-family: var(--font-head);
+      font-size: clamp(5rem, 13vw, 13rem);
+      line-height: 0.9; letter-spacing: 0.02em;
+      color: var(--white); position: relative; z-index: 2;
+    }
+    .collective-page-sub {
+      font-size: .6rem; letter-spacing: .5em; color: var(--red);
+      margin-bottom: 1.2rem; display: block; position: relative; z-index: 2;
+    }
+    .collective-scroll-hint {
+      position: absolute; bottom: 2rem; right: 2.8rem;
+      font-size: .55rem; letter-spacing: .3em; color: var(--grey-dim);
+      writing-mode: vertical-rl;
+      animation: fade-hint 3s ease-in-out infinite;
+    }
+    @keyframes fade-hint { 0%,100%{opacity:.3} 50%{opacity:.8} }
+
+    /* ── MEMBER SCREEN ── */
+    .member-screen {
+      height: 100vh; scroll-snap-align: start;
+      position: relative; display: flex; align-items: center;
+      overflow: hidden; background: #000;
+    }
+
+    /* Waveform canvas */
+    .waveform-canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 1; opacity: 0.6;
+    }
+
+    /* Large ghost number background */
+    .member-bg-num {
+      position: absolute; right: -0.05em; top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-head); font-size: 38vw;
+      line-height: 1; color: rgba(255,255,255,0.022);
+      user-select: none; pointer-events: none; z-index: 2;
+    }
+
+    /* ── MEMBER PHOTO ── */
+    .member-photo-wrap {
+      position: absolute;
+      right: 0; top: 0;
+      width: 44%;
+      height: 100%;
+      z-index: 3;
+      overflow: hidden;
+    }
+
+    /* Left gradient fade — blends photo into black background */
+    .member-photo-wrap::before {
+      content: '';
+      position: absolute; left: 0; top: 0;
+      width: 55%; height: 100%;
+      background: linear-gradient(90deg, #000 0%, rgba(0,0,0,0.7) 40%, transparent 100%);
+      z-index: 2; pointer-events: none;
+    }
+
+    /* Top + bottom fade */
+    .member-photo-wrap::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.6) 100%);
+      z-index: 2; pointer-events: none;
+    }
+
+    /* Red tint overlay */
+    .member-photo-tint {
+      position: absolute; inset: 0;
+      background: rgba(180, 0, 0, 0.12);
+      mix-blend-mode: multiply;
+      z-index: 3; pointer-events: none;
+      transition: background 0.5s;
+    }
+
+    .member-photo {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      filter: grayscale(95%) contrast(1.2) brightness(0.5);
+      display: block;
+      transition: filter 0.6s, transform 0.8s;
+    }
+
+    .member-screen:hover .member-photo {
+      filter: grayscale(65%) contrast(1.1) brightness(0.7);
+      transform: scale(1.04);
+    }
+
+    .member-screen:hover .member-photo-tint {
+      background: rgba(200, 0, 0, 0.2);
+    }
+
+    /* ── MEMBER CONTENT ── */
+    .member-content {
+      position: relative; z-index: 10;
+      padding: 0 2.8rem;
+      width: 100%; max-width: 1340px; margin: 0 auto;
+      display: grid; grid-template-rows: auto auto; gap: 3rem;
+    }
+
+    .member-header {
+      display: flex; align-items: flex-end; gap: 2.5rem;
+    }
+    .member-idx {
+      font-family: var(--font-head); font-size: 1.2rem;
+      letter-spacing: 0.1em; color: var(--red);
+      flex-shrink: 0; margin-bottom: 0.6rem;
+    }
+    .member-name-wrap { position: relative; display: inline-block; }
+    .member-name-wrap::after {
+      content: ''; position: absolute;
+      bottom: -4px; left: 0; height: 3px;
+      background: var(--red); width: 0;
+      transition: width 0.4s ease;
+    }
+    .member-screen:hover .member-name-wrap::after { width: 100%; }
+
+    .member-name {
+      font-family: var(--font-head);
+      font-size: clamp(4rem, 9vw, 9rem);
+      line-height: 0.92; letter-spacing: 0.02em;
+      color: var(--white); cursor: default;
+    }
+
+    .member-details {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .member-role  { font-size:.62rem; letter-spacing:.45em; color:var(--red); }
+    .member-desc  { font-size:.6rem; letter-spacing:.15em; color:var(--grey); max-width:340px; line-height:1.8; font-style:italic; }
+    .member-links { display:flex; gap:1.2rem; }
+    .member-link  {
+      font-size:.58rem; letter-spacing:.3em; color:var(--grey);
+      border-bottom: 1px solid transparent; padding-bottom:2px;
+      transition: color .2s, border-color .2s;
+    }
+    .member-link:hover { color:var(--white); border-color:var(--grey-dim); }
+
+    /* ── PROGRESS DOTS ── */
+    .collective-progress {
+      position:fixed; right:2rem; top:50%; transform:translateY(-50%);
+      z-index:100; display:flex; flex-direction:column; gap:.6rem;
+    }
+    .progress-dot { width:5px; height:5px; border-radius:50%; background:var(--grey-dim); transition:background .3s,transform .3s; cursor:pointer; }
+    .progress-dot.active { background:var(--red); transform:scale(1.5); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .member-photo-wrap { width: 38%; }
+    }
+    @media (max-width: 600px) {
+      .member-photo-wrap { width: 0; display: none; }
+      .member-header { flex-direction:column; gap:0; align-items:flex-start; }
+      .member-details { flex-direction:column; align-items:flex-start; gap:1rem; }
+      .member-desc { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-transition in"><span class="page-transition-label">INDICATE</span></div>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo" data-transition>
+      <img src="logo-mark.svg" alt="INDICATE" class="nav-logo-img">
+    </a>
+    <ul class="nav-links">
+      <li><a href="events.html" data-transition>EVENTS</a></li>
+      <li><a href="collective.html" data-transition>KOLLEKTIV</a></li>
+    </ul>
+  </nav>
+
+  <div class="collective-progress" id="collective-progress"></div>
+
+  <div class="collective-scroll" id="collective-scroll">
+
+    <!-- HEADER -->
+    <div class="collective-header">
+      <span class="collective-page-sub">DAS KOLLEKTIV</span>
+      <h1 class="collective-page-title">KOLLEKTIV<br>MEMBERS</h1>
+      <span class="collective-scroll-hint">SCROLL ↓</span>
+    </div>
+
+    <!-- MEMBER 01 -->
+    <div class="member-screen" data-index="1">
+      <canvas class="waveform-canvas"></canvas>
+      <div class="member-bg-num">01</div>
+      <div class="member-photo-wrap">
+        <img class="member-photo" src="https://picsum.photos/seed/dj_portrait_01/700/1050" alt="" loading="lazy">
+        <div class="member-photo-tint"></div>
+      </div>
+      <div class="member-content">
+        <div class="member-header">
+          <span class="member-idx">01</span>
+          <div class="member-name-wrap">
+            <h2 class="member-name" data-original="ARTIST NAME">ARTIST NAME</h2>
+          </div>
+        </div>
+        <div class="member-details">
+          <span class="member-role">DJ / PRODUCER</span>
+          <p class="member-desc">Underground Techno aus Berlin. Seit 2018 aktiv.</p>
+          <div class="member-links">
+            <a href="#" class="member-link">RA</a>
+            <a href="#" class="member-link">SOUNDCLOUD</a>
+            <a href="#" class="member-link">INSTAGRAM</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBER 02 -->
+    <div class="member-screen" data-index="2">
+      <canvas class="waveform-canvas"></canvas>
+      <div class="member-bg-num">02</div>
+      <div class="member-photo-wrap">
+        <img class="member-photo" src="https://picsum.photos/seed/dj_portrait_02/700/1050" alt="" loading="lazy">
+        <div class="member-photo-tint"></div>
+      </div>
+      <div class="member-content">
+        <div class="member-header">
+          <span class="member-idx">02</span>
+          <div class="member-name-wrap">
+            <h2 class="member-name" data-original="ARTIST NAME">ARTIST NAME</h2>
+          </div>
+        </div>
+        <div class="member-details">
+          <span class="member-role">DJ / PRODUCER</span>
+          <p class="member-desc">Industrial Techno. Releases auf eigenem Label.</p>
+          <div class="member-links">
+            <a href="#" class="member-link">RA</a>
+            <a href="#" class="member-link">SOUNDCLOUD</a>
+            <a href="#" class="member-link">INSTAGRAM</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBER 03 -->
+    <div class="member-screen" data-index="3">
+      <canvas class="waveform-canvas"></canvas>
+      <div class="member-bg-num">03</div>
+      <div class="member-photo-wrap">
+        <img class="member-photo" src="https://picsum.photos/seed/dj_portrait_03/700/1050" alt="" loading="lazy">
+        <div class="member-photo-tint"></div>
+      </div>
+      <div class="member-content">
+        <div class="member-header">
+          <span class="member-idx">03</span>
+          <div class="member-name-wrap">
+            <h2 class="member-name" data-original="ARTIST NAME">ARTIST NAME</h2>
+          </div>
+        </div>
+        <div class="member-details">
+          <span class="member-role">VISUAL ARTIST</span>
+          <p class="member-desc">Generative Visuals & Live-Visuals für alle INDICATE Events.</p>
+          <div class="member-links">
+            <a href="#" class="member-link">SOUNDCLOUD</a>
+            <a href="#" class="member-link">INSTAGRAM</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBER 04 -->
+    <div class="member-screen" data-index="4">
+      <canvas class="waveform-canvas"></canvas>
+      <div class="member-bg-num">04</div>
+      <div class="member-photo-wrap">
+        <img class="member-photo" src="https://picsum.photos/seed/dj_portrait_04/700/1050" alt="" loading="lazy">
+        <div class="member-photo-tint"></div>
+      </div>
+      <div class="member-content">
+        <div class="member-header">
+          <span class="member-idx">04</span>
+          <div class="member-name-wrap">
+            <h2 class="member-name" data-original="ARTIST NAME">ARTIST NAME</h2>
+          </div>
+        </div>
+        <div class="member-details">
+          <span class="member-role">DJ / LABEL</span>
+          <p class="member-desc">Gründer von INDICATE. Bookings & Konzept.</p>
+          <div class="member-links">
+            <a href="#" class="member-link">RA</a>
+            <a href="#" class="member-link">SOUNDCLOUD</a>
+            <a href="#" class="member-link">INSTAGRAM</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBER 05 -->
+    <div class="member-screen" data-index="5">
+      <canvas class="waveform-canvas"></canvas>
+      <div class="member-bg-num">05</div>
+      <div class="member-photo-wrap">
+        <img class="member-photo" src="https://picsum.photos/seed/dj_portrait_05/700/1050" alt="" loading="lazy">
+        <div class="member-photo-tint"></div>
+      </div>
+      <div class="member-content">
+        <div class="member-header">
+          <span class="member-idx">05</span>
+          <div class="member-name-wrap">
+            <h2 class="member-name" data-original="ARTIST NAME">ARTIST NAME</h2>
+          </div>
+        </div>
+        <div class="member-details">
+          <span class="member-role">PRODUCER</span>
+          <p class="member-desc">Elektronische Musik aus Berlin. Experimentell & roh.</p>
+          <div class="member-links">
+            <a href="#" class="member-link">SOUNDCLOUD</a>
+            <a href="#" class="member-link">INSTAGRAM</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MEMBER 06 -->
+    <div class="member-screen" data-index="6">
+      <canvas class="waveform-canvas"></canvas>
+      <div class="member-bg-num">06</div>
+      <div class="member-photo-wrap">
+        <img class="member-photo" src="https://picsum.photos/seed/dj_portrait_06/700/1050" alt="" loading="lazy">
+        <div class="member-photo-tint"></div>
+      </div>
+      <div class="member-content">
+        <div class="member-header">
+          <span class="member-idx">06</span>
+          <div class="member-name-wrap">
+            <h2 class="member-name" data-original="ARTIST NAME">ARTIST NAME</h2>
+          </div>
+        </div>
+        <div class="member-details">
+          <span class="member-role">DJ / BOOKING</span>
+          <p class="member-desc">Bookings, Planung & Stagemanagement für INDICATE.</p>
+          <div class="member-links">
+            <a href="#" class="member-link">RA</a>
+            <a href="#" class="member-link">INSTAGRAM</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /collective-scroll -->
+
+  <div class="legal-bar">
+    <a href="impressum.html">IMPRESSUM</a>
+    <div class="legal-bar-sep"></div>
+    <a href="datenschutz.html">DATENSCHUTZ</a>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="password.js"></script>
+  <script src="collective.js"></script>
+</body>
+</html>

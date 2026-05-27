@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INDICATE — Upcoming Events</title>
+
+  <!-- Password veil: hides body until auth check completes -->
+  <script>if(!sessionStorage.getItem('indicate_auth')){document.documentElement.classList.add('pw-lock')}</script>
+
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    html, body { height: 100%; overflow: hidden; }
+
+    /* Film grain */
+    #noise-canvas {
+      position: fixed; inset: 0; pointer-events: none; z-index: 50;
+      opacity: 0.055; mix-blend-mode: screen; image-rendering: pixelated;
+    }
+
+    /* ── SCROLL CONTAINER ── */
+    .events-scroll {
+      height: 100vh; overflow-y: scroll;
+      scroll-snap-type: y mandatory; scroll-behavior: smooth;
+    }
+    .events-scroll::-webkit-scrollbar { display: none; }
+
+    /* ── SECTION HEADER SCREENS ── */
+    .events-header-screen {
+      height: 100vh; scroll-snap-align: start;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 2.8rem 5rem;
+      position: relative; overflow: hidden; background: #000;
+    }
+    .events-header-screen::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(180,0,0,0.14) 0%, transparent 65%);
+    }
+    .events-page-title {
+      font-family: var(--font-head);
+      font-size: clamp(5rem, 14vw, 14rem);
+      line-height: 0.92; letter-spacing: 0.02em;
+      color: var(--white); position: relative; z-index: 2;
+    }
+    .events-page-subtitle {
+      font-size: 0.6rem; letter-spacing: 0.5em; color: var(--red);
+      margin-bottom: 1.2rem; display: block; position: relative; z-index: 2;
+    }
+    .events-scroll-hint {
+      position: absolute; bottom: 2rem; right: 2.8rem;
+      font-size: 0.55rem; letter-spacing: 0.3em; color: var(--grey-dim);
+      writing-mode: vertical-rl;
+      animation: fade-hint 3s ease-in-out infinite;
+    }
+    @keyframes fade-hint { 0%,100%{opacity:.3} 50%{opacity:.8} }
+
+    /* ── EVENT SCREEN ── */
+    .event-screen {
+      height: 100vh; scroll-snap-align: start;
+      position: relative; display: flex; align-items: center;
+      overflow: hidden; background: #000;
+      cursor: pointer;
+    }
+
+    /* Full-bleed background image */
+    .event-bg-image {
+      position: absolute; inset: 0; z-index: 0;
+    }
+    .event-bg-image img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%) brightness(0.18) contrast(1.2);
+      transition: filter 0.7s ease;
+      display: block;
+    }
+    .event-screen:hover .event-bg-image img {
+      filter: grayscale(88%) brightness(0.3) contrast(1.15);
+    }
+    .event-screen--past .event-bg-image img {
+      filter: grayscale(100%) brightness(0.13) contrast(1.1);
+    }
+    .event-screen--past:hover .event-bg-image img {
+      filter: grayscale(95%) brightness(0.22) contrast(1.1);
+    }
+
+    /* Gradient overlays */
+    .event-screen::after {
+      content: '';
+      position: absolute; inset: 0; z-index: 1;
+      background:
+        radial-gradient(ellipse at 15% 50%, rgba(200,0,0,0.16) 0%, transparent 45%),
+        radial-gradient(ellipse at 88% 50%, rgba(130,0,0,0.1) 0%, transparent 50%),
+        linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 25%, transparent 72%, rgba(0,0,0,0.55) 100%);
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+
+    .event-bg-date {
+      position: absolute; left: -0.04em; top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--font-head); font-size: 46vw;
+      line-height: 1; letter-spacing: -0.02em;
+      color: rgba(255,255,255,0.03);
+      user-select: none; pointer-events: none; z-index: 2;
+      transition: color 0.5s;
+    }
+    .event-screen:hover .event-bg-date {
+      color: rgba(255,255,255,0.05);
+    }
+
+    .laser-line {
+      position: absolute; left: 0; height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--red) 30%, var(--red) 70%, transparent 100%);
+      width: 0; pointer-events: none; z-index: 5;
+    }
+
+    /* ── EVENT CONTENT ── */
+    .event-content {
+      position: relative; z-index: 10;
+      padding: 0 2.8rem 4rem;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 4rem; align-items: center;
+      width: 100%; max-width: 1340px; margin: 0 auto;
+    }
+
+    .event-number {
+      font-size: .65rem; letter-spacing: .45em;
+      color: var(--red); display: flex; align-items: center;
+      gap: .7rem; margin-bottom: 1.3rem;
+    }
+    .event-number::before {
+      content: '';
+      width: 20px; height: 2px;
+      background: var(--red); flex-shrink: 0;
+    }
+    .event-screen--past .event-number {
+      color: rgba(255,255,255,0.3);
+    }
+    .event-screen--past .event-number::before {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .event-date-display {
+      font-family: var(--font-head);
+      font-size: clamp(4rem, 10vw, 9rem);
+      line-height: .95; letter-spacing: .02em;
+      color: var(--white); margin-bottom: 1.5rem;
+      transition: color 0.3s;
+    }
+    .event-screen--past .event-date-display { color: rgba(255,255,255,.5); }
+    .event-date-display span { display:block; font-size:.4em; letter-spacing:.12em; color:var(--grey); }
+
+    .event-name { font-family:var(--font-head); font-size:clamp(2rem,5vw,4.5rem); letter-spacing:.05em; color:var(--white); margin-bottom:.6rem; }
+    .event-venue { font-size:.65rem; letter-spacing:.25em; color:var(--grey); margin-bottom:.3rem; }
+    .event-time  { font-size:.6rem;  letter-spacing:.2em;  color:var(--grey-dim); }
+
+    .event-countdown { display:flex; gap:1.5rem; margin-top:2rem; margin-bottom:2.5rem; }
+    .countdown-unit { text-align:center; }
+    .countdown-num  { font-family:var(--font-head); font-size:2.8rem; line-height:1; color:var(--red); display:block; }
+    .countdown-label{ font-size:.5rem; letter-spacing:.35em; color:var(--grey-dim); margin-top:.3rem; display:block; }
+    .countdown-sep  { font-family:var(--font-head); font-size:2.2rem; color:var(--grey-dim); align-self:flex-start; margin-top:.1rem; }
+
+    .event-past-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .55rem; letter-spacing: .35em;
+      color: var(--grey); padding: .5rem 1rem;
+      border: 1px solid rgba(255,255,255,.12);
+      margin-top: 2rem; margin-bottom: 2.5rem;
+    }
+    .event-past-badge::before {
+      content: '';
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--grey-dim);
+    }
+
+    .event-ticket-btn {
+      display:inline-block; font-size:.62rem; letter-spacing:.38em;
+      padding:1rem 2.4rem; color:var(--white); background:var(--red);
+      border:1px solid var(--red);
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      transition: background .22s, color .22s;
+    }
+    .event-ticket-btn:hover { background:transparent; color:var(--red); }
+    .event-ticket-btn.soon  { background:transparent; border-color:rgba(255,255,255,.15); color:var(--grey); cursor:default; }
+
+    .event-right { border-left:1px solid rgba(255,255,255,.07); padding-left:4rem; }
+    .lineup-label { font-size:.55rem; letter-spacing:.45em; color:var(--red); display:block; margin-bottom:1.8rem; }
+    .lineup-list  { display:flex; flex-direction:column; gap:.2rem; }
+    .lineup-artist {
+      font-family:var(--font-head); font-size:clamp(1.4rem,3.5vw,2.8rem);
+      letter-spacing:.04em; color:var(--white);
+      padding:.4rem 0; border-bottom:1px solid rgba(255,255,255,.05);
+      opacity:.85; transition:opacity .2s,color .2s;
+    }
+    .lineup-artist:hover { opacity:1; color:var(--red); }
+    .event-screen--past .lineup-label { color: rgba(255,255,255,.3); }
+
+    /* ── ACTION BAR ── */
+    .event-action-bar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 54px; z-index: 20;
+      display: flex; align-items: center; justify-content: center;
+      gap: 1rem;
+      font-family: var(--font-body);
+      font-size: 0.6rem; letter-spacing: 0.48em;
+      color: rgba(255,255,255,0.3);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(6px);
+      overflow: hidden;
+      transition: color 0.28s;
+    }
+    .event-action-bar::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--red);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.38s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    .event-screen:hover .event-action-bar {
+      color: #fff;
+    }
+    .event-screen:hover .event-action-bar::before {
+      transform: scaleX(1);
+    }
+    .event-action-bar > * {
+      position: relative; z-index: 1;
+    }
+    .eab-icon {
+      font-size: 1rem;
+      transition: transform 0.3s;
+    }
+    .event-screen:hover .eab-icon { transform: translateX(4px); }
+
+    /* ── PROGRESS DOTS ── */
+    .events-progress { position:fixed; right:2rem; top:50%; transform:translateY(-50%); z-index:100; display:flex; flex-direction:column; gap:.6rem; }
+    .progress-dot { width:5px; height:5px; border-radius:50%; background:var(--grey-dim); transition:background .3s,transform .3s; cursor:pointer; }
+    .progress-dot.active { background:var(--red); transform:scale(1.5); }
+    .progress-dot.past { background: rgba(255,255,255,0.15); }
+    .progress-dot.past.active { background: rgba(255,255,255,0.5); transform:scale(1.5); }
+
+    /* ══════════════════════════════════════════════════
+       EVENT DETAIL PANEL
+    ══════════════════════════════════════════════════ */
+    .event-detail-panel {
+      position: fixed; inset: 0; z-index: 400;
+      background: #000; overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.65s cubic-bezier(0.76, 0, 0.24, 1);
+    }
+    .event-detail-panel.open { transform: translateY(0); }
+    .event-detail-panel::-webkit-scrollbar { width: 3px; }
+    .event-detail-panel::-webkit-scrollbar-thumb { background: var(--red); }
+
+    .edp-header {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      padding: 1.6rem 2.8rem;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .edp-header-left { display: flex; align-items: center; gap: 1.2rem; }
+    .edp-num { font-size:.6rem; letter-spacing:.45em; color:var(--red); }
+    .edp-past-tag {
+      font-size:.5rem; letter-spacing:.3em; color:var(--grey);
+      border:1px solid rgba(255,255,255,.12);
+      padding:.2rem .6rem;
+    }
+    .edp-close {
+      font-family: var(--font-body); font-size:.62rem;
+      letter-spacing:.3em; color:var(--white);
+      background: transparent; border: 1px solid rgba(255,255,255,.2);
+      padding:.6rem 1.4rem; cursor:pointer;
+      transition: border-color .2s, color .2s;
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .edp-close:hover { border-color:var(--red); color:var(--red); }
+
+    .edp-body {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0; min-height: calc(100vh - 65px);
+    }
+    .edp-info {
+      padding: 5rem 2.8rem;
+      border-right: 1px solid rgba(255,255,255,.06);
+      display: flex; flex-direction: column;
+    }
+    .edp-event-num { font-size:.55rem; letter-spacing:.45em; color:var(--red); display:block; margin-bottom:1.5rem; }
+    .edp-event-title {
+      font-family: var(--font-head);
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      line-height: .95; letter-spacing: .03em;
+      color: var(--white); margin-bottom: 2.5rem;
+    }
+    .edp-meta { display:flex; flex-direction:column; gap:.5rem; margin-bottom:3rem; }
+    .edp-meta-row { display:flex; gap:1rem; align-items:baseline; }
+    .edp-meta-label { font-size:.52rem; letter-spacing:.35em; color:var(--grey-dim); width:70px; flex-shrink:0; }
+    .edp-meta-value { font-size:.65rem; letter-spacing:.18em; color:var(--white); }
+    .edp-lineup-section { margin-bottom:3rem; }
+    .edp-lineup-label { font-size:.52rem; letter-spacing:.45em; color:var(--red); display:block; margin-bottom:1.2rem; }
+    .edp-lineup-artist { font-family:var(--font-head); font-size:2rem; letter-spacing:.05em; color:var(--white); padding:.4rem 0; border-bottom:1px solid rgba(255,255,255,.05); display:block; }
+    .edp-countdown { display:flex; gap:1.5rem; margin-top:auto; padding-top:3rem; border-top:1px solid rgba(255,255,255,.05); }
+    .edp-past-status {
+      margin-top: auto; padding-top: 3rem;
+      border-top: 1px solid rgba(255,255,255,.05);
+      font-size: .6rem; letter-spacing: .35em; color: var(--grey);
+      display: flex; align-items: center; gap: .8rem;
+    }
+    .edp-past-status::before {
+      content: ''; display: block;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--grey-dim);
+    }
+
+    .edp-photo-main { position: relative; overflow: hidden; }
+    .edp-photo-main img {
+      width:100%; height:100%; object-fit:cover;
+      filter: grayscale(85%) contrast(1.15) brightness(0.55);
+      display: block; transition: filter 0.5s;
+    }
+    .edp-photo-main:hover img { filter: grayscale(60%) contrast(1.1) brightness(0.7); }
+    .edp-photo-main::after {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(135deg, rgba(180,0,0,0.18) 0%, transparent 60%),
+                  linear-gradient(90deg, rgba(0,0,0,0.5) 0%, transparent 30%);
+      pointer-events: none;
+    }
+
+    .edp-gallery { border-top: 1px solid rgba(255,255,255,.06); }
+    .edp-gallery-header {
+      padding: 2rem 2.8rem 1.5rem;
+      display:flex; align-items:center; gap:1.5rem;
+    }
+    .edp-gallery-title { font-size:.55rem; letter-spacing:.45em; color:var(--red); }
+    .edp-gallery-rule { flex:1; height:1px; background:rgba(255,255,255,.06); }
+    .edp-gallery-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px;
+    }
+    .edp-gallery-grid img {
+      width: 100%; aspect-ratio: 4/3; object-fit: cover;
+      filter: grayscale(90%) contrast(1.15) brightness(0.5);
+      display: block; transition: filter 0.4s, transform 0.4s;
+      cursor: zoom-in;
+    }
+    .edp-gallery-grid img:hover {
+      filter: grayscale(50%) contrast(1.1) brightness(0.75);
+      transform: scale(1.02); z-index: 1; position: relative;
+    }
+    .edp-gallery-grid img:first-child { grid-column: span 2; aspect-ratio: 16/9; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .event-content { grid-template-columns:1fr; gap:2rem; }
+      .event-right { border-left:none; border-top:1px solid rgba(255,255,255,.07); padding-left:0; padding-top:2rem; }
+      .event-bg-date { font-size:55vw; top:10%; transform:none; }
+      .edp-body { grid-template-columns:1fr; }
+      .edp-photo-main { min-height:50vw; }
+      .edp-gallery-grid { grid-template-columns:repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-transition in"><span class="page-transition-label">INDICATE</span></div>
+  <canvas id="noise-canvas"></canvas>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo" data-transition>
+      <img src="logo-mark.svg" alt="INDICATE" class="nav-logo-img">
+    </a>
+    <ul class="nav-links">
+      <li><a href="events.html" data-transition>EVENTS</a></li>
+      <li><a href="collective.html" data-transition>KOLLEKTIV</a></li>
+    </ul>
+  </nav>
+
+  <div class="events-progress" id="events-progress"></div>
+
+  <!-- ════════════════════════════════════════════
+       MAIN SCROLL
+  ════════════════════════════════════════════ -->
+  <div class="events-scroll" id="events-scroll">
+
+    <!-- UPCOMING HEADER -->
+    <div class="events-header-screen">
+      <span class="events-page-subtitle">UPCOMING</span>
+      <h1 class="events-page-title">UPCOMING<br>EVENTS</h1>
+      <span class="events-scroll-hint">SCROLL ↓</span>
+    </div>
+
+    <!-- EVENT 001 -->
+    <div class="event-screen" data-event-id="0">
+      <div class="event-bg-image"><img src="https://picsum.photos/seed/evtbg001/1920/1080" alt="" loading="lazy"></div>
+      <div class="event-bg-date">14</div>
+      <div class="laser-line" style="top:36%"></div>
+      <div class="laser-line" style="top:67%"></div>
+      <div class="event-content">
+        <div class="event-left">
+          <span class="event-number">EVENT 001</span>
+          <div class="event-date-display">14.06<span>2026</span></div>
+          <div class="event-name">INDICATE 001</div>
+          <div class="event-venue">TRESOR — BERLIN</div>
+          <div class="event-time">23:00 — OPEN END</div>
+          <div class="event-countdown" data-date="2026-06-14T23:00:00"></div>
+          <a href="#" class="event-ticket-btn" onclick="return false">TICKETS →</a>
+        </div>
+        <div class="event-right">
+          <span class="lineup-label">LINEUP</span>
+          <div class="lineup-list">
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-action-bar">
+        <span>EVENT DETAILS</span>
+        <span class="eab-icon">→</span>
+      </div>
+    </div>
+
+    <!-- EVENT 002 -->
+    <div class="event-screen" data-event-id="1">
+      <div class="event-bg-image"><img src="https://picsum.photos/seed/evtbg002/1920/1080" alt="" loading="lazy"></div>
+      <div class="event-bg-date">28</div>
+      <div class="laser-line" style="top:42%"></div>
+      <div class="laser-line" style="top:71%"></div>
+      <div class="event-content">
+        <div class="event-left">
+          <span class="event-number">EVENT 002</span>
+          <div class="event-date-display">28.06<span>2026</span></div>
+          <div class="event-name">INDICATE 002</div>
+          <div class="event-venue">BERGHAIN — BERLIN</div>
+          <div class="event-time">00:00 — OPEN END</div>
+          <div class="event-countdown" data-date="2026-06-28T00:00:00"></div>
+          <a href="#" class="event-ticket-btn" onclick="return false">TICKETS →</a>
+        </div>
+        <div class="event-right">
+          <span class="lineup-label">LINEUP</span>
+          <div class="lineup-list">
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-action-bar">
+        <span>EVENT DETAILS</span>
+        <span class="eab-icon">→</span>
+      </div>
+    </div>
+
+    <!-- EVENT 003 -->
+    <div class="event-screen" data-event-id="2">
+      <div class="event-bg-image"><img src="https://picsum.photos/seed/evtbg003/1920/1080" alt="" loading="lazy"></div>
+      <div class="event-bg-date">19</div>
+      <div class="laser-line" style="top:33%"></div>
+      <div class="laser-line" style="top:65%"></div>
+      <div class="event-content">
+        <div class="event-left">
+          <span class="event-number">EVENT 003</span>
+          <div class="event-date-display">19.07<span>2026</span></div>
+          <div class="event-name">INDICATE 003</div>
+          <div class="event-venue">OHM — BERLIN</div>
+          <div class="event-time">22:00 — OPEN END</div>
+          <div class="event-countdown" data-date="2026-07-19T22:00:00"></div>
+          <a href="#" class="event-ticket-btn soon" onclick="return false">DEMNÄCHST</a>
+        </div>
+        <div class="event-right">
+          <span class="lineup-label">LINEUP</span>
+          <div class="lineup-list">
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-action-bar">
+        <span>EVENT DETAILS</span>
+        <span class="eab-icon">→</span>
+      </div>
+    </div>
+
+    <!-- EVENT 004 -->
+    <div class="event-screen" data-event-id="3">
+      <div class="event-bg-image"><img src="https://picsum.photos/seed/evtbg004/1920/1080" alt="" loading="lazy"></div>
+      <div class="event-bg-date">09</div>
+      <div class="laser-line" style="top:55%"></div>
+      <div class="laser-line" style="top:78%"></div>
+      <div class="event-content">
+        <div class="event-left">
+          <span class="event-number">EVENT 004</span>
+          <div class="event-date-display">09.08<span>2026</span></div>
+          <div class="event-name">INDICATE 004</div>
+          <div class="event-venue">TBA — BERLIN</div>
+          <div class="event-time">TBA</div>
+          <div class="event-countdown" data-date="2026-08-09T22:00:00"></div>
+          <a href="#" class="event-ticket-btn soon" onclick="return false">DEMNÄCHST</a>
+        </div>
+        <div class="event-right">
+          <span class="lineup-label">LINEUP</span>
+          <div class="lineup-list">
+            <div class="lineup-artist">TBA</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-action-bar">
+        <span>EVENT DETAILS</span>
+        <span class="eab-icon">→</span>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════
+         PAST EVENTS
+    ════════════════════════════════════════════ -->
+    <div class="events-header-screen" style="--header-accent: rgba(255,255,255,0.08)">
+      <span class="events-page-subtitle" style="color: rgba(255,255,255,0.3)">VERGANGENE EVENTS</span>
+      <h1 class="events-page-title" style="color: rgba(255,255,255,0.45)">PAST<br>EVENTS</h1>
+    </div>
+
+    <!-- PAST 01 -->
+    <div class="event-screen event-screen--past" data-event-id="4">
+      <div class="event-bg-image"><img src="https://picsum.photos/seed/pastbg001/1920/1080" alt="" loading="lazy"></div>
+      <div class="event-bg-date">20</div>
+      <div class="laser-line" style="top:40%"></div>
+      <div class="laser-line" style="top:72%"></div>
+      <div class="event-content">
+        <div class="event-left">
+          <span class="event-number">PAST EVENT 01</span>
+          <div class="event-date-display">20.12<span>2025</span></div>
+          <div class="event-name">INDICATE —01</div>
+          <div class="event-venue">TRESOR — BERLIN</div>
+          <div class="event-time">23:00 — OPEN END</div>
+          <div class="event-past-badge">ABGESCHLOSSEN</div>
+        </div>
+        <div class="event-right">
+          <span class="lineup-label">LINEUP</span>
+          <div class="lineup-list">
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-action-bar">
+        <span>IMPRESSIONEN ANSEHEN</span>
+        <span class="eab-icon">→</span>
+      </div>
+    </div>
+
+    <!-- PAST 02 -->
+    <div class="event-screen event-screen--past" data-event-id="5">
+      <div class="event-bg-image"><img src="https://picsum.photos/seed/pastbg002/1920/1080" alt="" loading="lazy"></div>
+      <div class="event-bg-date">08</div>
+      <div class="laser-line" style="top:30%"></div>
+      <div class="laser-line" style="top:62%"></div>
+      <div class="event-content">
+        <div class="event-left">
+          <span class="event-number">PAST EVENT 02</span>
+          <div class="event-date-display">08.11<span>2025</span></div>
+          <div class="event-name">INDICATE —02</div>
+          <div class="event-venue">OHM — BERLIN</div>
+          <div class="event-time">22:00 — OPEN END</div>
+          <div class="event-past-badge">ABGESCHLOSSEN</div>
+        </div>
+        <div class="event-right">
+          <span class="lineup-label">LINEUP</span>
+          <div class="lineup-list">
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-action-bar">
+        <span>IMPRESSIONEN ANSEHEN</span>
+        <span class="eab-icon">→</span>
+      </div>
+    </div>
+
+    <!-- PAST 03 -->
+    <div class="event-screen event-screen--past" data-event-id="6">
+      <div class="event-bg-image"><img src="https://picsum.photos/seed/pastbg003/1920/1080" alt="" loading="lazy"></div>
+      <div class="event-bg-date">27</div>
+      <div class="laser-line" style="top:47%"></div>
+      <div class="laser-line" style="top:76%"></div>
+      <div class="event-content">
+        <div class="event-left">
+          <span class="event-number">PAST EVENT 03</span>
+          <div class="event-date-display">27.09<span>2025</span></div>
+          <div class="event-name">INDICATE —03</div>
+          <div class="event-venue">BERGHAIN — BERLIN</div>
+          <div class="event-time">00:00 — OPEN END</div>
+          <div class="event-past-badge">ABGESCHLOSSEN</div>
+        </div>
+        <div class="event-right">
+          <span class="lineup-label">LINEUP</span>
+          <div class="lineup-list">
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-action-bar">
+        <span>IMPRESSIONEN ANSEHEN</span>
+        <span class="eab-icon">→</span>
+      </div>
+    </div>
+
+  </div><!-- /events-scroll -->
+
+  <!-- EVENT DETAIL PANEL -->
+  <div class="event-detail-panel" id="event-detail-panel">
+    <div class="edp-header">
+      <div class="edp-header-left">
+        <span class="edp-num" id="edp-num">EVENT 001</span>
+        <span class="edp-past-tag" id="edp-past-tag" style="display:none">PAST EVENT</span>
+      </div>
+      <button class="edp-close" id="edp-close">ESC / SCHLIESSEN ×</button>
+    </div>
+    <div class="edp-body">
+      <div class="edp-info">
+        <span class="edp-event-num" id="edp-event-num"></span>
+        <h2 class="edp-event-title" id="edp-event-title"></h2>
+        <div class="edp-meta" id="edp-meta"></div>
+        <div class="edp-lineup-section">
+          <span class="edp-lineup-label">LINEUP</span>
+          <div id="edp-lineup"></div>
+        </div>
+        <div id="edp-bottom"></div>
+      </div>
+      <div class="edp-photo-main" id="edp-photo-main">
+        <img id="edp-main-img" src="" alt="" loading="lazy">
+      </div>
+    </div>
+    <div class="edp-gallery">
+      <div class="edp-gallery-header">
+        <span class="edp-gallery-title">IMPRESSIONEN</span>
+        <div class="edp-gallery-rule"></div>
+      </div>
+      <div class="edp-gallery-grid" id="edp-gallery-grid"></div>
+    </div>
+  </div>
+
+  <div class="legal-bar">
+    <a href="impressum.html">IMPRESSUM</a>
+    <div class="legal-bar-sep"></div>
+    <a href="datenschutz.html">DATENSCHUTZ</a>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="events.js"></script>
+  <script src="password.js"></script>
+</body>
+</html>
