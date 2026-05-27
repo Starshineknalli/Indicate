@@ -12,6 +12,8 @@
     .collective-scroll {
       height: 100vh; overflow-y: scroll;
       scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
     }
     .collective-scroll::-webkit-scrollbar { display: none; }
 
@@ -184,10 +186,16 @@
       .member-photo-wrap { width: 38%; }
     }
     @media (max-width: 600px) {
+      .collective-scroll { scroll-snap-type: y proximity; }
+      .collective-progress { display: none; }
+      .collective-header { padding: 0 1.4rem 4rem; }
       .member-photo-wrap { width: 0; display: none; }
       .member-header { flex-direction:column; gap:0; align-items:flex-start; }
       .member-details { flex-direction:column; align-items:flex-start; gap:1rem; }
       .member-desc { display:none; }
+      .member-content { padding: 0 1.4rem; }
+      .member-name { font-size: clamp(3rem, 11vw, 6rem); }
+      .member-link { padding: 0.6rem 0; touch-action: manipulation; min-height: 44px; display: flex; align-items: center; }
     }
   </style>
 </head>

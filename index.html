@@ -116,6 +116,8 @@
       gap: 2rem;
       pointer-events: all;
       opacity: 0;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .hero-btn {
@@ -127,6 +129,10 @@
       border: 1px solid rgba(255,255,255,0.25);
       transition: border-color 0.25s, color 0.25s, background 0.25s;
       cursor: pointer;
+      touch-action: manipulation;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
     }
 
     .hero-btn:hover {

@@ -118,6 +118,10 @@ ul { list-style: none; }
   letter-spacing: 0.32em;
   color: var(--white);
   transition: opacity 0.2s;
+  touch-action: manipulation;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
 .nav-links a:hover,
 .nav-links a.active { opacity: 0.4; }
@@ -167,6 +171,13 @@ ul { list-style: none; }
 @media (max-width: 600px) {
   .nav { padding: 1rem 1.4rem; }
   .nav-links { gap: 1.4rem; }
+}
+
+/* ── TOUCH TARGETS (mobile accessibility) ── */
+@media (pointer: coarse) {
+  .nav-logo { min-height: 44px; display: flex; align-items: center; }
+  .legal-bar a { min-height: 44px; display: flex; align-items: center; }
+  #pw-submit { touch-action: manipulation; min-height: 50px; }
 }
 
 /* ══════════════════════════════════════════════════════════
