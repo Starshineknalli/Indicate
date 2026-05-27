@@ -251,12 +251,12 @@
       const idx = screens.indexOf(entry.target);
       dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     });
-  }, { threshold: 0.5 });
+  }, { threshold: 0.5, root: document.body });
   screens.forEach(s => dotObserver.observe(s));
 
   // ── BIG DATE PARALLAX ─────────────────────────────────────────────────────
-  window.addEventListener('scroll', () => {
-    const st = window.scrollY;
+  document.body.addEventListener('scroll', () => {
+    const st = document.body.scrollTop;
     document.querySelectorAll('.event-bg-date').forEach(el => {
       const section = el.closest('.event-screen');
       const offset  = (st - section.offsetTop) * 0.15;
@@ -332,7 +332,7 @@
     // Open panel
     panel.classList.add('open');
     panel.scrollTop = 0;
-    document.documentElement.style.overflowY = 'hidden';
+    document.body.style.overflow = 'hidden';
 
     // Close on ESC
     const onKey = (e) => { if (e.key === 'Escape') closeEventDetail(); };
@@ -341,7 +341,7 @@
 
   function closeEventDetail() {
     panel.classList.remove('open');
-    document.documentElement.style.overflowY = '';
+    document.body.style.overflow = '';
   }
 
   btnClose.addEventListener('click', closeEventDetail);

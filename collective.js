@@ -121,13 +121,13 @@
       const idx = screens.indexOf(entry.target);
       dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     });
-  }, { threshold: 0.5 });
+  }, { threshold: 0.5, root: document.body });
 
   screens.forEach(s => observer.observe(s));
 
   // ── BIG NUMBER PARALLAX ───────────────────────────────────────────────────
-  window.addEventListener('scroll', () => {
-    const st = window.scrollY;
+  document.body.addEventListener('scroll', () => {
+    const st = document.body.scrollTop;
     document.querySelectorAll('.member-bg-num').forEach(el => {
       const section = el.closest('.member-screen');
       const offset  = (st - section.offsetTop) * 0.12;

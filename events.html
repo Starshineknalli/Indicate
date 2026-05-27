@@ -10,13 +10,16 @@
 
   <link rel="stylesheet" href="shared.css" />
   <style>
-    html {
-      overflow-y: scroll;
+    html { height: 100%; overflow: hidden; }
+    body {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
       scroll-snap-type: y mandatory;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: none;
     }
-    body { overflow-x: hidden; }
 
     /* Film grain */
     #noise-canvas {
@@ -29,7 +32,7 @@
 
     /* ── SECTION HEADER SCREENS ── */
     .events-header-screen {
-      height: 100vh; scroll-snap-align: start;
+      height: 100svh; scroll-snap-align: start;
       display: flex; flex-direction: column;
       justify-content: flex-end;
       padding: 0 2.8rem 5rem;
@@ -60,7 +63,7 @@
 
     /* ── EVENT SCREEN ── */
     .event-screen {
-      height: 100vh; scroll-snap-align: start;
+      height: 100svh; scroll-snap-align: start;
       position: relative; display: flex; align-items: center;
       overflow: hidden; background: #000;
       cursor: pointer;
@@ -364,7 +367,7 @@
       .edp-gallery-grid { grid-template-columns:repeat(2,1fr); }
     }
     @media (max-width: 600px) {
-      html { scroll-snap-type: y proximity; }
+      body { scroll-snap-type: y proximity; }
       .events-progress { display: none; }
       .events-header-screen { padding: 0 1.4rem 4rem; }
       .event-content { padding: 0 1.4rem 5rem; gap: 1rem; }

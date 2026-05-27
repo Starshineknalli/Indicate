@@ -7,19 +7,22 @@
   <script>if(!sessionStorage.getItem('indicate_auth')){document.documentElement.classList.add('pw-lock')}</script>
   <link rel="stylesheet" href="shared.css" />
   <style>
-    html {
-      overflow-y: scroll;
+    html { height: 100%; overflow: hidden; }
+    body {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
       scroll-snap-type: y mandatory;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: none;
     }
-    body { overflow-x: hidden; }
 
     .collective-scroll { display: block; }
 
     /* ── HEADER ── */
     .collective-header {
-      height: 100vh; scroll-snap-align: start;
+      height: 100svh; scroll-snap-align: start;
       display: flex; flex-direction: column;
       justify-content: flex-end;
       padding: 0 2.8rem 5rem;
@@ -50,7 +53,7 @@
 
     /* ── MEMBER SCREEN ── */
     .member-screen {
-      height: 100vh; scroll-snap-align: start;
+      height: 100svh; scroll-snap-align: start;
       position: relative; display: flex; align-items: center;
       overflow: hidden; background: #000;
     }
@@ -186,7 +189,7 @@
       .member-photo-wrap { width: 38%; }
     }
     @media (max-width: 600px) {
-      html { scroll-snap-type: y proximity; }
+      body { scroll-snap-type: y proximity; }
       .collective-progress { display: none; }
       .collective-header { padding: 0 1.4rem 4rem; }
       .member-photo-wrap { width: 0; display: none; }
