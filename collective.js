@@ -101,9 +101,8 @@
   });
 
   // ── PROGRESS DOTS ─────────────────────────────────────────────────────────
-  const scrollEl   = document.getElementById('collective-scroll');
   const progressEl = document.getElementById('collective-progress');
-  const screens    = Array.from(scrollEl.children);
+  const screens    = Array.from(document.getElementById('collective-scroll').children);
 
   screens.forEach((_, i) => {
     const dot = document.createElement('div');
@@ -122,13 +121,13 @@
       const idx = screens.indexOf(entry.target);
       dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     });
-  }, { root: scrollEl, threshold: 0.5 });
+  }, { threshold: 0.5 });
 
   screens.forEach(s => observer.observe(s));
 
   // ── BIG NUMBER PARALLAX ───────────────────────────────────────────────────
-  scrollEl.addEventListener('scroll', () => {
-    const st = scrollEl.scrollTop;
+  window.addEventListener('scroll', () => {
+    const st = window.scrollY;
     document.querySelectorAll('.member-bg-num').forEach(el => {
       const section = el.closest('.member-screen');
       const offset  = (st - section.offsetTop) * 0.12;

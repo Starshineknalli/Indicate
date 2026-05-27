@@ -7,15 +7,15 @@
   <script>if(!sessionStorage.getItem('indicate_auth')){document.documentElement.classList.add('pw-lock')}</script>
   <link rel="stylesheet" href="shared.css" />
   <style>
-    html, body { height: 100%; overflow: hidden; }
-
-    .collective-scroll {
-      height: 100vh; overflow-y: scroll;
+    html {
+      overflow-y: scroll;
       scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
-      touch-action: pan-y;
     }
-    .collective-scroll::-webkit-scrollbar { display: none; }
+    body { overflow-x: hidden; }
+
+    .collective-scroll { display: block; }
 
     /* ── HEADER ── */
     .collective-header {
@@ -186,7 +186,7 @@
       .member-photo-wrap { width: 38%; }
     }
     @media (max-width: 600px) {
-      .collective-scroll { scroll-snap-type: y proximity; }
+      html { scroll-snap-type: y proximity; }
       .collective-progress { display: none; }
       .collective-header { padding: 0 1.4rem 4rem; }
       .member-photo-wrap { width: 0; display: none; }

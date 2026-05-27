@@ -194,6 +194,67 @@
       from { transform: scale(0.6); opacity: 0.4; }
       to   { transform: scale(1.3); opacity: 1; }
     }
+
+    /* ── SCANLINES ── */
+    .scanlines {
+      position: fixed; inset: 0; z-index: 25; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0,0,0,0.07) 0px, rgba(0,0,0,0.07) 1px,
+        transparent 1px, transparent 4px
+      );
+    }
+
+    /* ── FILM GRAIN ── */
+    #grain-canvas {
+      position: fixed; inset: 0; pointer-events: none; z-index: 24;
+      opacity: 0.055; mix-blend-mode: screen; image-rendering: pixelated;
+      width: 100%; height: 100%;
+    }
+
+    /* ── STROBE ── */
+    #strobe {
+      position: fixed; inset: 0; z-index: 23; pointer-events: none;
+      opacity: 0; background: #fff;
+    }
+
+    /* ── CORNER BRACKETS ── */
+    .corner {
+      position: fixed; width: 32px; height: 32px; z-index: 26;
+      pointer-events: none; opacity: 0; transition: opacity 1.8s ease;
+    }
+    .corner.visible { opacity: 0.55; }
+    .corner-tl { top: 1.4rem; left: 1.4rem; border-top: 1px solid var(--red); border-left: 1px solid var(--red); }
+    .corner-tr { top: 1.4rem; right: 1.4rem; border-top: 1px solid var(--red); border-right: 1px solid var(--red); }
+    .corner-bl { bottom: 1.4rem; left: 1.4rem; border-bottom: 1px solid var(--red); border-left: 1px solid var(--red); }
+    .corner-br { bottom: 1.4rem; right: 1.4rem; border-bottom: 1px solid var(--red); border-right: 1px solid var(--red); }
+
+    /* ── TICKER ── */
+    .ticker-wrap {
+      position: fixed; bottom: 2.4rem; left: 0; right: 0; z-index: 22;
+      overflow: hidden; pointer-events: none;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding: 0.38rem 0;
+      opacity: 0; transition: opacity 1.5s ease;
+    }
+    .ticker-wrap.visible { opacity: 1; }
+    .ticker {
+      display: inline-flex; white-space: nowrap;
+      font-size: 0.46rem; letter-spacing: 0.44em;
+      color: rgba(255,255,255,0.18);
+      animation: ticker-run 35s linear infinite;
+    }
+    .ticker span { padding-right: 0; }
+    @keyframes ticker-run {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @media (max-width: 600px) {
+      .hero-cta { flex-direction: column; gap: 1rem; align-items: center; }
+      .hero-bottom { bottom: 5.5rem; left: 1.4rem; right: 1.4rem; }
+      .ticker-wrap { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -202,6 +263,15 @@
   <div class="page-transition in">
     <span class="page-transition-label">INDICATE</span>
   </div>
+
+  <!-- ATMOSPHERE LAYERS -->
+  <div class="scanlines"></div>
+  <canvas id="grain-canvas"></canvas>
+  <div id="strobe"></div>
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
 
   <!-- 3D CANVAS -->
   <canvas id="scene-canvas"></canvas>
@@ -254,6 +324,13 @@
     <div class="hero-bottom-right">
       NEXT EVENT<br>
       14.06.2026
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>INDICATE &nbsp;×&nbsp; TECHNO KOLLEKTIV &nbsp;×&nbsp; MÜNCHEN &nbsp;×&nbsp; 2026 &nbsp;×&nbsp; TRESOR &nbsp;×&nbsp; BERGHAIN &nbsp;×&nbsp; OHM &nbsp;×&nbsp; UNDERGROUND TECHNO &nbsp;×&nbsp; RAVE CULTURE &nbsp;×&nbsp; </span><span>INDICATE &nbsp;×&nbsp; TECHNO KOLLEKTIV &nbsp;×&nbsp; MÜNCHEN &nbsp;×&nbsp; 2026 &nbsp;×&nbsp; TRESOR &nbsp;×&nbsp; BERGHAIN &nbsp;×&nbsp; OHM &nbsp;×&nbsp; UNDERGROUND TECHNO &nbsp;×&nbsp; RAVE CULTURE &nbsp;×&nbsp; </span>
     </div>
   </div>
 

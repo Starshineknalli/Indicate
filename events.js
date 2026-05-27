@@ -125,6 +125,41 @@
         'https://picsum.photos/seed/past03g5/600/450',
       ],
     },
+    // ── THECUBE SERIES ──
+    {
+      isPast: true,
+      num:    'THECUBE 2.0',
+      name:   'THECUBE 2.0',
+      date:   '09.05.2026',
+      venue:  'MÜNCHEN',
+      time:   '22:00 — OPEN END',
+      lineup: ['ARTIST NAME', 'ARTIST NAME', 'ARTIST NAME'],
+      mainPhoto: 'https://picsum.photos/seed/cube2main/1200/800',
+      gallery: [
+        'https://picsum.photos/seed/cube2g1/900/600',
+        'https://picsum.photos/seed/cube2g2/600/450',
+        'https://picsum.photos/seed/cube2g3/600/450',
+        'https://picsum.photos/seed/cube2g4/600/450',
+        'https://picsum.photos/seed/cube2g5/600/450',
+      ],
+    },
+    {
+      isPast: true,
+      num:    'THECUBE 1.0',
+      name:   'THECUBE 1.0',
+      date:   '27.09.2025',
+      venue:  'MÜNCHEN',
+      time:   '22:00 — OPEN END',
+      lineup: ['ARTIST NAME', 'ARTIST NAME'],
+      mainPhoto: 'https://picsum.photos/seed/cube1main/1200/800',
+      gallery: [
+        'https://picsum.photos/seed/cube1g1/900/600',
+        'https://picsum.photos/seed/cube1g2/600/450',
+        'https://picsum.photos/seed/cube1g3/600/450',
+        'https://picsum.photos/seed/cube1g4/600/450',
+        'https://picsum.photos/seed/cube1g5/600/450',
+      ],
+    },
   ];
 
   // ── FILM GRAIN ────────────────────────────────────────────────────────────
@@ -199,9 +234,8 @@
   document.querySelectorAll('.laser-line').forEach(el => animateLaser(el));
 
   // ── PROGRESS DOTS ─────────────────────────────────────────────────────────
-  const scrollEl   = document.getElementById('events-scroll');
   const progressEl = document.getElementById('events-progress');
-  const screens    = Array.from(scrollEl.children);
+  const screens    = Array.from(document.getElementById('events-scroll').children);
 
   screens.forEach((_, i) => {
     const dot = document.createElement('div');
@@ -217,12 +251,12 @@
       const idx = screens.indexOf(entry.target);
       dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     });
-  }, { root: scrollEl, threshold: 0.5 });
+  }, { threshold: 0.5 });
   screens.forEach(s => dotObserver.observe(s));
 
   // ── BIG DATE PARALLAX ─────────────────────────────────────────────────────
-  scrollEl.addEventListener('scroll', () => {
-    const st = scrollEl.scrollTop;
+  window.addEventListener('scroll', () => {
+    const st = window.scrollY;
     document.querySelectorAll('.event-bg-date').forEach(el => {
       const section = el.closest('.event-screen');
       const offset  = (st - section.offsetTop) * 0.15;
@@ -298,7 +332,7 @@
     // Open panel
     panel.classList.add('open');
     panel.scrollTop = 0;
-    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflowY = 'hidden';
 
     // Close on ESC
     const onKey = (e) => { if (e.key === 'Escape') closeEventDetail(); };
@@ -307,7 +341,7 @@
 
   function closeEventDetail() {
     panel.classList.remove('open');
-    document.body.style.overflow = '';
+    document.documentElement.style.overflowY = '';
   }
 
   btnClose.addEventListener('click', closeEventDetail);

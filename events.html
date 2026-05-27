@@ -10,7 +10,13 @@
 
   <link rel="stylesheet" href="shared.css" />
   <style>
-    html, body { height: 100%; overflow: hidden; }
+    html {
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+    body { overflow-x: hidden; }
 
     /* Film grain */
     #noise-canvas {
@@ -18,14 +24,8 @@
       opacity: 0.055; mix-blend-mode: screen; image-rendering: pixelated;
     }
 
-    /* ── SCROLL CONTAINER ── */
-    .events-scroll {
-      height: 100vh; overflow-y: scroll;
-      scroll-snap-type: y mandatory; scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      touch-action: pan-y;
-    }
-    .events-scroll::-webkit-scrollbar { display: none; }
+    /* ── SCROLL CONTAINER (wrapper only) ── */
+    .events-scroll { display: block; }
 
     /* ── SECTION HEADER SCREENS ── */
     .events-header-screen {
@@ -364,11 +364,10 @@
       .edp-gallery-grid { grid-template-columns:repeat(2,1fr); }
     }
     @media (max-width: 600px) {
-      .events-scroll { scroll-snap-type: y proximity; }
+      html { scroll-snap-type: y proximity; }
       .events-progress { display: none; }
       .events-header-screen { padding: 0 1.4rem 4rem; }
       .event-content { padding: 0 1.4rem 5rem; gap: 1rem; }
-      .events-header-screen { padding-bottom: 4rem; }
       .event-date-display { font-size: clamp(2.8rem, 13vw, 5rem); margin-bottom: 0.8rem; }
       .event-name { font-size: clamp(1.4rem, 6vw, 2.5rem); }
       .event-countdown { gap: 0.7rem; margin-top: 1.2rem; margin-bottom: 1.6rem; }
@@ -541,6 +540,36 @@
       <h1 class="events-page-title" style="color: rgba(255,255,255,0.45)">PAST<br>EVENTS</h1>
     </div>
 
+    <!-- THECUBE 2.0 -->
+    <div class="event-screen event-screen--past" data-event-id="7">
+      <div class="event-bg-image"><img src="https://picsum.photos/seed/cube2bg/1920/1080" alt="" loading="lazy"></div>
+      <div class="event-bg-date">09</div>
+      <div class="laser-line" style="top:38%"></div>
+      <div class="laser-line" style="top:69%"></div>
+      <div class="event-content">
+        <div class="event-left">
+          <span class="event-number">THECUBE 2.0</span>
+          <div class="event-date-display">09.05<span>2026</span></div>
+          <div class="event-name">THECUBE 2.0</div>
+          <div class="event-venue">MÜNCHEN</div>
+          <div class="event-time">22:00 — OPEN END</div>
+          <div class="event-past-badge">ABGESCHLOSSEN</div>
+        </div>
+        <div class="event-right">
+          <span class="lineup-label">LINEUP</span>
+          <div class="lineup-list">
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-action-bar">
+        <span>IMPRESSIONEN ANSEHEN</span>
+        <span class="eab-icon">→</span>
+      </div>
+    </div>
+
     <!-- PAST 01 -->
     <div class="event-screen event-screen--past" data-event-id="4">
       <div class="event-bg-image"><img src="https://picsum.photos/seed/pastbg001/1920/1080" alt="" loading="lazy"></div>
@@ -619,6 +648,35 @@
           <span class="lineup-label">LINEUP</span>
           <div class="lineup-list">
             <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+            <div class="lineup-artist">ARTIST NAME</div>
+          </div>
+        </div>
+      </div>
+      <div class="event-action-bar">
+        <span>IMPRESSIONEN ANSEHEN</span>
+        <span class="eab-icon">→</span>
+      </div>
+    </div>
+
+    <!-- THECUBE 1.0 -->
+    <div class="event-screen event-screen--past" data-event-id="8">
+      <div class="event-bg-image"><img src="https://picsum.photos/seed/cube1bg/1920/1080" alt="" loading="lazy"></div>
+      <div class="event-bg-date">27</div>
+      <div class="laser-line" style="top:44%"></div>
+      <div class="laser-line" style="top:73%"></div>
+      <div class="event-content">
+        <div class="event-left">
+          <span class="event-number">THECUBE 1.0</span>
+          <div class="event-date-display">27.09<span>2025</span></div>
+          <div class="event-name">THECUBE 1.0</div>
+          <div class="event-venue">MÜNCHEN</div>
+          <div class="event-time">22:00 — OPEN END</div>
+          <div class="event-past-badge">ABGESCHLOSSEN</div>
+        </div>
+        <div class="event-right">
+          <span class="lineup-label">LINEUP</span>
+          <div class="lineup-list">
             <div class="lineup-artist">ARTIST NAME</div>
             <div class="lineup-artist">ARTIST NAME</div>
           </div>

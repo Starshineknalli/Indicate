@@ -32,9 +32,9 @@ composer.addPass(new RenderPass(scene, camera));
 
 const bloomPass  = new UnrealBloomPass(
   new THREE.Vector2(window.innerWidth, window.innerHeight),
-  1.9,   // strength
-  0.65,  // radius
-  0.12   // threshold — only emissive parts bloom
+  2.6,   // strength — stronger
+  0.7,   // radius
+  0.06   // threshold — lower = more blooms
 );
 composer.addPass(bloomPass);
 
@@ -86,6 +86,25 @@ scene.add(glowL);
 const glowR = new THREE.PointLight(0xff3300, 8, 2.5);
 glowR.position.set(1.1, 0.45, 0);
 scene.add(glowR);
+
+// ── MIRROR BALL ───────────────────────────────────────────────────────────────
+
+const mirrorBall = new THREE.Mesh(
+  new THREE.SphereGeometry(0.14, 28, 28),
+  new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1, roughness: 0.04 })
+);
+mirrorBall.position.set(0, 3.4, 0.3);
+scene.add(mirrorBall);
+
+const discoSpots = [];
+const discoColors = [0xff0000, 0xffffff, 0xff2200, 0xffffff];
+discoColors.forEach((col, i) => {
+  const spot = new THREE.SpotLight(col, 35, 18, Math.PI / 14, 0.25);
+  spot.position.copy(mirrorBall.position);
+  scene.add(spot);
+  scene.add(spot.target);
+  discoSpots.push({ spot, phase: (i / discoColors.length) * Math.PI * 2 });
+});
 
 // ── TABLE ────────────────────────────────────────────────────────────────────
 
@@ -315,17 +334,17 @@ mixer.children.forEach(c => {
 
 // ── SMOKE PARTICLES ───────────────────────────────────────────────────────────
 
-const PARTICLE_COUNT = 500;
+const PARTICLE_COUNT = 1400;
 const positions      = new Float32Array(PARTICLE_COUNT * 3);
 const sizes          = new Float32Array(PARTICLE_COUNT);
 const opacities      = new Float32Array(PARTICLE_COUNT);
 
 function randParticle(i) {
-  positions[i * 3 + 0] = (Math.random() - 0.5) * 3.2;
-  positions[i * 3 + 1] = Math.random() * 2.5;
-  positions[i * 3 + 2] = (Math.random() - 0.5) * 0.9;
-  sizes[i]    = 4 + Math.random() * 14;
-  opacities[i] = 0.05 + Math.random() * 0.25;
+  positions[i * 3 + 0] = (Math.random() - 0.5) * 4.0;
+  positions[i * 3 + 1] = Math.random() * 3.5;
+  positions[i * 3 + 2] = (Math.random() - 0.5) * 1.2;
+  sizes[i]     = 6 + Math.random() * 20;
+  opacities[i] = 0.08 + Math.random() * 0.38;
 }
 
 for (let i = 0; i < PARTICLE_COUNT; i++) randParticle(i);
@@ -335,10 +354,10 @@ smokeGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 smokeGeo.setAttribute('size',     new THREE.BufferAttribute(sizes, 1));
 
 const smokeMat = new THREE.PointsMaterial({
-  color: 0x553322,
-  size: 0.06,
+  color: 0x882211,
+  size: 0.09,
   transparent: true,
-  opacity: 0.18,
+  opacity: 0.32,
   depthWrite: false,
   blending: THREE.AdditiveBlending,
   sizeAttenuation: true,
@@ -346,15 +365,25 @@ const smokeMat = new THREE.PointsMaterial({
 
 scene.add(new THREE.Points(smokeGeo, smokeMat));
 
-// ── MOUSE PARALLAX ────────────────────────────────────────────────────────────
+// ── MOUSE / GYRO PARALLAX ─────────────────────────────────────────────────────
 
 let mouseX = 0, mouseY = 0;
 let camTargetX = 0, camTargetY = 0;
+let shakeX = 0, shakeY = 0;
+let lastStrobeT = 0, strobeOngoing = false;
 
 window.addEventListener('mousemove', e => {
   mouseX = (e.clientX / window.innerWidth  - 0.5) * 2;
   mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
 });
+
+// Gyroscope for mobile parallax
+if (window.DeviceOrientationEvent) {
+  window.addEventListener('deviceorientation', e => {
+    if (e.gamma != null) mouseX = Math.max(-1, Math.min(1, e.gamma / 20));
+    if (e.beta  != null) mouseY = Math.max(-1, Math.min(1, (e.beta - 45) / 20));
+  });
+}
 
 // ── RESIZE ────────────────────────────────────────────────────────────────────
 
@@ -376,21 +405,58 @@ function triggerGlitch() {
   glitchActive = true;
 
   const el = canvas;
-  const startFilter = `contrast(3) brightness(2) hue-rotate(${Math.random()*30}deg)`;
-  el.style.filter = startFilter;
-  el.style.transform = `translate(${(Math.random()-0.5)*6}px, ${(Math.random()-0.5)*3}px)`;
+  const hue = Math.random() * 50;
+  const tx  = (Math.random() - 0.5) * 18;
+  const ty  = (Math.random() - 0.5) * 9;
+
+  el.style.filter    = `contrast(4.5) brightness(2.8) hue-rotate(${hue}deg) saturate(5)`;
+  el.style.transform = `translate(${tx}px, ${ty}px) scaleX(${0.97 + Math.random() * 0.06})`;
 
   setTimeout(() => {
-    el.style.filter = '';
-    el.style.transform = '';
+    el.style.filter = ''; el.style.transform = '';
     glitchActive = false;
-  }, 80 + Math.random() * 60);
 
-  const next = 5000 + Math.random() * 12000;
+    if (Math.random() > 0.55) {
+      setTimeout(() => {
+        glitchActive = true;
+        el.style.filter    = `contrast(3.5) brightness(2.2) hue-rotate(${hue + 25}deg)`;
+        el.style.transform = `translate(${-tx * 0.6}px, ${ty * 0.4}px)`;
+        setTimeout(() => {
+          el.style.filter = ''; el.style.transform = '';
+          glitchActive = false;
+        }, 35 + Math.random() * 35);
+      }, 55 + Math.random() * 30);
+    }
+  }, 75 + Math.random() * 90);
+
+  const next = 2200 + Math.random() * 6500;
   setTimeout(triggerGlitch, next);
 }
 
-setTimeout(triggerGlitch, 4000);
+setTimeout(triggerGlitch, 3000);
+
+// ── FILM GRAIN ────────────────────────────────────────────────────────────────
+
+const grainCanvas = document.getElementById('grain-canvas');
+if (grainCanvas) {
+  const gCtx = grainCanvas.getContext('2d');
+  grainCanvas.width  = 320;
+  grainCanvas.height = 220;
+  let lastGrain = 0;
+  function renderGrain(ts) {
+    requestAnimationFrame(renderGrain);
+    if (ts - lastGrain < 45) return;
+    lastGrain = ts;
+    const img = gCtx.createImageData(320, 220);
+    const d   = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const v = Math.random() * 255 | 0;
+      d[i] = d[i+1] = d[i+2] = v; d[i+3] = 255;
+    }
+    gCtx.putImageData(img, 0, 0);
+  }
+  requestAnimationFrame(renderGrain);
+}
 
 // ── ANIMATION LOOP ────────────────────────────────────────────────────────────
 
@@ -417,30 +483,64 @@ function animate() {
     }
   });
 
-  // Glow pulse
-  glowMixer.intensity = 14 + beat * 10;
-  glowL.intensity = 5 + beat * 6;
-  glowR.intensity = 5 + vu2 * 6;
+  // Glow pulse — stronger beat response
+  glowMixer.intensity = 18 + beat * 22;
+  glowL.intensity     = 6  + beat * 12;
+  glowR.intensity     = 6  + vu2  * 12;
 
-  // Spot light subtle movement
-  spotRed.position.x = -3 + Math.sin(t * 0.25) * 0.5;
+  // Spot light dramatic sweep
+  spotRed.position.x   = -3   + Math.sin(t * 0.3) * 1.2;
+  spotRed.intensity    = 100  + beat * 80;
+  spotWhite.position.x = 3.5  + Math.sin(t * 0.2 + 1) * 0.8;
+  spotWhite.intensity  = 35   + vu2 * 25;
+
+  // Mirror ball spin + disco spots sweep
+  mirrorBall.rotation.y += 0.018;
+  const discoBase = t * 1.1;
+  discoSpots.forEach((ds, i) => {
+    const angle = discoBase + ds.phase;
+    ds.spot.target.position.set(
+      Math.cos(angle) * 3.5,
+      -0.8 + Math.sin(angle * 0.5) * 0.8,
+      Math.sin(angle) * 0.8
+    );
+    ds.spot.target.updateMatrixWorld();
+    ds.spot.intensity = (20 + beat * 40) * (0.5 + Math.abs(Math.sin(angle * 1.3)) * 0.5);
+  });
 
   // Smoke particles drift up
   for (let i = 0; i < PARTICLE_COUNT; i++) {
-    positions[i * 3 + 1] += 0.0015 + Math.random() * 0.001;
-    positions[i * 3 + 0] += (Math.random() - 0.5) * 0.001;
-
-    if (positions[i * 3 + 1] > 3.5) randParticle(i);
+    positions[i * 3 + 1] += 0.0018 + Math.random() * 0.0012;
+    positions[i * 3 + 0] += (Math.random() - 0.5) * 0.0015;
+    if (positions[i * 3 + 1] > 4.5) randParticle(i);
   }
   smokeGeo.attributes.position.needsUpdate = true;
 
-  // Camera parallax (smooth follow)
-  camTargetX += (mouseX * 0.25 - camTargetX) * 0.04;
-  camTargetY += (-mouseY * 0.15 - camTargetY) * 0.04;
+  // Camera parallax + shake on beat peak
+  camTargetX += (mouseX * 0.28 - camTargetX) * 0.04;
+  camTargetY += (-mouseY * 0.18 - camTargetY) * 0.04;
 
-  camera.position.x = camTargetX;
-  camera.position.y = 2.2 + camTargetY + Math.sin(t * 0.2) * 0.04;
+  const shakeStr = beat > 0.9 ? (beat - 0.9) * 10 * 0.025 : 0;
+  shakeX = (shakeX + (Math.random() - 0.5) * shakeStr) * 0.72;
+  shakeY = (shakeY + (Math.random() - 0.5) * shakeStr) * 0.72;
+
+  camera.position.x = camTargetX + shakeX;
+  camera.position.y = 2.2 + camTargetY + Math.sin(t * 0.2) * 0.04 + shakeY;
   camera.lookAt(0, 0.15, 0);
+
+  // Strobe flash on BPM peak
+  const strobeEl = document.getElementById('strobe');
+  if (strobeEl && beat > 0.97 && t - lastStrobeT > 0.38 && !strobeOngoing) {
+    lastStrobeT = t;
+    strobeOngoing = true;
+    strobeEl.style.transition = 'opacity 0s';
+    strobeEl.style.opacity = '0.10';
+    setTimeout(() => {
+      strobeEl.style.transition = 'opacity 0.12s';
+      strobeEl.style.opacity = '0';
+      strobeOngoing = false;
+    }, 55);
+  }
 
   composer.render();
 }
@@ -477,4 +577,11 @@ window.addEventListener('load', () => {
     delay: 2.0,
     ease: 'power2.out',
   });
+
+  // Corners + ticker appear last
+  setTimeout(() => {
+    document.querySelectorAll('.corner').forEach(c => c.classList.add('visible'));
+    const tw = document.querySelector('.ticker-wrap');
+    if (tw) tw.classList.add('visible');
+  }, 2600);
 });
