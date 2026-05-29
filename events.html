@@ -774,80 +774,34 @@
       color: rgba(255,255,255,0.35);
     }
 
-    /* ── Tier list ── */
-    .evt-bs-tiers { padding: 0.5rem 0 0; }
-
-    .evt-bs-tier {
-      display: flex; align-items: center; gap: 0.8rem;
-      padding: 1rem 1.6rem 1rem 1.4rem; /* extra right padding vs scrollbar */
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+    /* ── Price grid ── */
+    .evt-bs-price-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 8px; padding: 1rem 1.4rem 0;
+    }
+    .evt-bs-price-btn {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 1.1rem 0.3rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
       cursor: pointer; touch-action: manipulation;
-      position: relative; transition: background 0.15s;
+      transition: background 0.15s, border-color 0.15s; gap: 0.1rem;
     }
-    .evt-bs-tier:active { background: rgba(255,255,255,0.03); }
-    .evt-bs-tier.active { background: rgba(224,0,0,0.09); }
-
-    .evt-bs-tier-info { flex: 1; min-width: 0; }
-    .evt-bs-tier-name-row {
-      display: flex; align-items: center; gap: 0.45rem;
+    .evt-bs-price-btn:hover  { background: rgba(255,255,255,0.07); }
+    .evt-bs-price-btn.active {
+      background: rgba(224,0,0,0.1);
+      border-color: var(--red);
     }
-    .evt-bs-tier-icon {
-      font-size: 0.75rem; color: rgba(255,255,255,0.3); flex-shrink: 0;
+    .evt-bs-price-eur {
+      font-family: var(--font-body); font-size: 0.4rem;
+      color: var(--grey); letter-spacing: 0.05em;
     }
-    .evt-bs-tier-label {
-      font-family: var(--font-head); font-size: 1.35rem;
-      letter-spacing: 0.07em; color: var(--white);
-      line-height: 1;
+    .evt-bs-price-num {
+      font-family: var(--font-head); font-size: 2rem;
+      color: var(--white); line-height: 1;
     }
-    .evt-bs-tier-sub {
-      font-size: 0.4rem; letter-spacing: 0.18em;
-      color: rgba(255,255,255,0.3); margin-top: 0.22rem; display: block;
-    }
-    .evt-bs-tier-price {
-      font-family: var(--font-head); font-size: 1.9rem;
-      letter-spacing: 0.02em; color: var(--white); flex-shrink: 0;
-      transition: color 0.18s;
-    }
-    .evt-bs-tier.active .evt-bs-tier-label,
-    .evt-bs-tier.active .evt-bs-tier-price { color: var(--red); }
-
-    /* SUBVENTIONIERT — visually smallest, implies dependency */
-    .evt-bs-tier--solidarity {
-      opacity: 0.5;
-      background: rgba(255,255,255,0.01);
-    }
-    .evt-bs-tier--solidarity .evt-bs-tier-label { font-size: 1.05rem; }
-    .evt-bs-tier--solidarity .evt-bs-tier-price { font-size: 1.55rem; color: rgba(255,255,255,0.55); }
-    .evt-bs-tier--solidarity .evt-bs-tier-icon  { color: rgba(255,100,100,0.4); }
-    .evt-bs-tier--solidarity:hover { opacity: 0.7; }
-
-    /* BASIS — neutral */
-    .evt-bs-tier--basis { opacity: 0.78; }
-
-    /* FAIR — recommended, subtle distinction */
-    .evt-bs-tier-badge { display: none; } /* unused, replaced by inline tag */
-    .evt-bs-tier-recommend-tag {
-      font-family: var(--font-body); font-size: 0.3rem;
-      letter-spacing: 0.35em; color: rgba(224,0,0,0.75);
-      border: 1px solid rgba(224,0,0,0.28);
-      padding: 0.15rem 0.42rem; white-space: nowrap;
-      vertical-align: middle; margin-left: 0.5rem;
-    }
-    .evt-bs-tier--recommended {
-      border-left: 1px solid rgba(224,0,0,0.18);
-      border-right: 1px solid rgba(224,0,0,0.18);
-      border-bottom: 1px solid rgba(224,0,0,0.18);
-    }
-    .evt-bs-tier--recommended .evt-bs-tier-label { font-size: 1.5rem; }
-    .evt-bs-tier--recommended.active {
-      background: rgba(224,0,0,0.1) !important;
-      border-color: rgba(224,0,0,0.55) !important;
-    }
-
-    /* SUPPORTER — premium, largest, warm feel */
-    .evt-bs-tier--supporter { background: rgba(255,255,255,0.02); }
-    .evt-bs-tier--supporter .evt-bs-tier-label { font-size: 1.5rem; }
-    .evt-bs-tier--supporter .evt-bs-tier-icon  { color: rgba(224,0,0,0.6); font-size: 0.85rem; }
+    .evt-bs-price-btn.active .evt-bs-price-num { color: var(--red); }
+    .evt-bs-price-btn.active .evt-bs-price-eur { color: var(--red); }
 
     .evt-bs-price-incl {
       font-family: var(--font-body); font-size: 0.42rem;
