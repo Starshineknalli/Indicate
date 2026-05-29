@@ -671,28 +671,32 @@
       }
     }
 
-    /* Bottom sheet top bar with handle + close */
+    /* Bottom sheet top bar — 3-col flex, no absolute positioning */
     .evt-bs-topbar {
-      display: flex; align-items: center; justify-content: center;
-      position: relative; padding: 0.8rem 1rem 0;
-      flex-shrink: 0;
+      display: flex; align-items: center;
+      padding: 1rem 1rem 0; flex-shrink: 0; gap: 0;
+    }
+    .evt-bs-topbar-spacer {
+      width: 36px; flex-shrink: 0;
+    }
+    .evt-bs-handle-wrap {
+      flex: 1; display: flex; justify-content: center; align-items: center;
     }
     .evt-bs-handle {
       width: 32px; height: 3px; border-radius: 2px;
       background: rgba(255,255,255,0.14);
     }
     .evt-bs-close-btn {
-      position: absolute; right: 1rem; top: 50%;
-      transform: translateY(-50%);
+      width: 36px; height: 36px; flex-shrink: 0;
       background: transparent; border: 1px solid rgba(255,255,255,0.14);
-      color: rgba(255,255,255,0.45);
-      font-size: 0.75rem; line-height: 1;
-      width: 34px; height: 34px; flex-shrink: 0;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.78rem; line-height: 1;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; touch-action: manipulation;
       transition: border-color 0.2s, color 0.2s;
     }
-    .evt-bs-close-btn:hover { border-color: var(--red); color: var(--red); }
+    .evt-bs-close-btn:hover  { border-color: var(--red); color: var(--red); }
+    .evt-bs-close-btn:active { border-color: var(--red); color: var(--red); }
     .evt-bs-event-info {
       padding: 1.1rem 1.4rem 0.85rem;
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -783,53 +787,67 @@
     .evt-bs-tier.active { background: rgba(224,0,0,0.09); }
 
     .evt-bs-tier-info { flex: 1; min-width: 0; }
+    .evt-bs-tier-name-row {
+      display: flex; align-items: center; gap: 0.45rem;
+    }
+    .evt-bs-tier-icon {
+      font-size: 0.75rem; color: rgba(255,255,255,0.3); flex-shrink: 0;
+    }
     .evt-bs-tier-label {
       font-family: var(--font-head); font-size: 1.35rem;
       letter-spacing: 0.07em; color: var(--white);
-      display: block; line-height: 1;
+      line-height: 1;
     }
     .evt-bs-tier-sub {
       font-size: 0.4rem; letter-spacing: 0.18em;
-      color: rgba(255,255,255,0.3); margin-top: 0.2rem; display: block;
+      color: rgba(255,255,255,0.3); margin-top: 0.22rem; display: block;
     }
     .evt-bs-tier-price {
       font-family: var(--font-head); font-size: 1.9rem;
       letter-spacing: 0.02em; color: var(--white); flex-shrink: 0;
       transition: color 0.18s;
     }
-    .evt-bs-tier.active .evt-bs-tier-label { color: var(--red); }
-    .evt-bs-tier.active .evt-bs-tier-price  { color: var(--red); }
+    .evt-bs-tier.active .evt-bs-tier-label,
+    .evt-bs-tier.active .evt-bs-tier-price { color: var(--red); }
 
-    /* Solidarity tier — faded, implies receiving support */
+    /* SUBVENTIONIERT — visually smallest, implies dependency */
     .evt-bs-tier--solidarity {
-      opacity: 0.55;
+      opacity: 0.5;
+      background: rgba(255,255,255,0.01);
     }
-    .evt-bs-tier--solidarity .evt-bs-tier-label { font-size: 1.1rem; }
-    .evt-bs-tier--solidarity:hover { opacity: 0.75; }
+    .evt-bs-tier--solidarity .evt-bs-tier-label { font-size: 1.05rem; }
+    .evt-bs-tier--solidarity .evt-bs-tier-price { font-size: 1.55rem; color: rgba(255,255,255,0.55); }
+    .evt-bs-tier--solidarity .evt-bs-tier-icon  { color: rgba(255,100,100,0.4); }
+    .evt-bs-tier--solidarity:hover { opacity: 0.7; }
 
-    /* Recommended badge */
+    /* BASIS — neutral */
+    .evt-bs-tier--basis { opacity: 0.78; }
+
+    /* FAIR — recommended, most prominent */
     .evt-bs-tier-badge {
       position: absolute; top: 0; left: 0; right: 0;
       font-family: var(--font-body); font-size: 0.36rem;
-      letter-spacing: 0.45em; color: var(--red); text-align: center;
-      padding: 0.18rem 0;
+      letter-spacing: 0.42em; color: var(--red); text-align: center;
+      padding: 0.2rem 0;
       background: rgba(224,0,0,0.1);
-      border-bottom: 1px solid rgba(224,0,0,0.18);
+      border-bottom: 1px solid rgba(224,0,0,0.2);
     }
     .evt-bs-tier--recommended {
-      padding-top: 1.55rem;
-      border-left: 1px solid rgba(224,0,0,0.22);
-      border-right: 1px solid rgba(224,0,0,0.22);
-      border-bottom: 1px solid rgba(224,0,0,0.22);
+      padding-top: 1.6rem;
+      border-left: 1px solid rgba(224,0,0,0.25);
+      border-right: 1px solid rgba(224,0,0,0.25);
+      border-bottom: 1px solid rgba(224,0,0,0.25);
     }
-    .evt-bs-tier--recommended .evt-bs-tier-label { color: rgba(255,255,255,0.95); }
+    .evt-bs-tier--recommended .evt-bs-tier-label { font-size: 1.5rem; }
     .evt-bs-tier--recommended.active {
-      background: rgba(224,0,0,0.12) !important;
+      background: rgba(224,0,0,0.11) !important;
       border-color: var(--red) !important;
     }
 
-    /* Supporter tier — premium feel */
-    .evt-bs-tier--supporter .evt-bs-tier-label { font-size: 1.45rem; }
+    /* SUPPORTER — premium, largest, warm feel */
+    .evt-bs-tier--supporter { background: rgba(255,255,255,0.02); }
+    .evt-bs-tier--supporter .evt-bs-tier-label { font-size: 1.5rem; }
+    .evt-bs-tier--supporter .evt-bs-tier-icon  { color: rgba(224,0,0,0.6); font-size: 0.85rem; }
 
     .evt-bs-price-incl {
       font-family: var(--font-body); font-size: 0.42rem;
@@ -1234,7 +1252,8 @@
     <div class="evt-bs-backdrop"></div>
     <div class="evt-bs-panel">
       <div class="evt-bs-topbar">
-        <div class="evt-bs-handle"></div>
+        <div class="evt-bs-topbar-spacer"></div>
+        <div class="evt-bs-handle-wrap"><div class="evt-bs-handle"></div></div>
         <button class="evt-bs-close-btn" id="evt-bs-close-btn">✕</button>
       </div>
       <div class="evt-bs-event-info">

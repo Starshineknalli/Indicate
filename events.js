@@ -464,24 +464,28 @@
   const PWYW_TIERS = [
     {
       price: 11, cls: 'evt-bs-tier--solidarity',
-      label: 'AUF UNTERSTÜTZUNG',
-      sub:   'andere machen diesen Preis für dich möglich',
+      label: 'SUBVENTIONIERT',
+      sub:   'andere zahlen für dich mit',
+      icon:  '↓',
     },
     {
-      price: 13, cls: '',
+      price: 13, cls: 'evt-bs-tier--basis',
       label: 'BASIS',
-      sub:   '',
+      sub:   'deckt die Grundkosten',
+      icon:  '',
     },
     {
       price: 15, cls: 'evt-bs-tier--recommended',
       label: 'FAIR',
-      sub:   '',
-      badge: '★ MEIST GEWÄHLT',
+      sub:   'der faire Beitrag',
+      badge: '★  MEIST GEWÄHLT',
+      icon:  '',
     },
     {
       price: 18, cls: 'evt-bs-tier--supporter',
       label: 'SUPPORTER',
-      sub:   'du machst günstige Tickets für andere möglich',
+      sub:   'du ermöglichst günstigere Tickets für andere',
+      icon:  '♥',
     },
   ];
 
@@ -526,7 +530,10 @@
             <div class="evt-bs-tier ${t.cls}" data-price="${t.price}">
               ${t.badge ? `<span class="evt-bs-tier-badge">${t.badge}</span>` : ''}
               <div class="evt-bs-tier-info">
-                <span class="evt-bs-tier-label">${t.label}</span>
+                <div class="evt-bs-tier-name-row">
+                  ${t.icon ? `<span class="evt-bs-tier-icon">${t.icon}</span>` : ''}
+                  <span class="evt-bs-tier-label">${t.label}</span>
+                </div>
                 ${t.sub ? `<span class="evt-bs-tier-sub">${t.sub}</span>` : ''}
               </div>
               <span class="evt-bs-tier-price">€${t.price}</span>
