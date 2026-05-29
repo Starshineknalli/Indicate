@@ -428,6 +428,39 @@
 
   bsBackdrop.addEventListener('click', closeBottomSheet);
 
+  // X-Button
+  document.getElementById('evt-bs-close-btn')
+    .addEventListener('click', closeBottomSheet);
+
+  // Swipe down to close
+  let bsTouchStartY = 0;
+  let bsDragging    = false;
+
+  bsPanel.addEventListener('touchstart', e => {
+    if (bsPanel.scrollTop > 0) return;
+    bsTouchStartY = e.touches[0].clientY;
+    bsDragging = false;
+  }, { passive: true });
+
+  bsPanel.addEventListener('touchmove', e => {
+    if (bsPanel.scrollTop > 0) return;
+    const dy = e.touches[0].clientY - bsTouchStartY;
+    if (dy > 8) {
+      bsDragging = true;
+      bsPanel.style.transition = 'none';
+      bsPanel.style.transform  = `translateY(${Math.max(0, dy)}px)`;
+    }
+  }, { passive: true });
+
+  bsPanel.addEventListener('touchend', e => {
+    if (!bsDragging) return;
+    const dy = e.changedTouches[0].clientY - bsTouchStartY;
+    bsPanel.style.transition = '';
+    bsPanel.style.transform  = '';
+    if (dy > 100) closeBottomSheet();
+    bsDragging = false;
+  }, { passive: true });
+
   const PWYW_PRICES = [11, 13, 15, 18];
 
   function openBottomSheet(eventIdx, tab) {

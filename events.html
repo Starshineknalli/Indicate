@@ -551,9 +551,9 @@
     }
     .evt-mob-lineup-teaser:hover .evt-mob-teaser-name { color: rgba(255,255,255,0.9); }
     .evt-mob-teaser-more {
-      font-family: var(--font-body); font-size: 0.38rem;
-      letter-spacing: 0.35em; color: rgba(255,255,255,0.22);
-      display: block; margin-top: 0.3rem;
+      font-family: var(--font-body); font-size: 0.55rem;
+      letter-spacing: 0.3em; color: rgba(255,255,255,0.35);
+      display: block; margin-top: 0.5rem;
     }
 
     /* Tap hint */
@@ -671,10 +671,29 @@
       }
     }
 
+    /* Bottom sheet top bar with handle + close */
+    .evt-bs-topbar {
+      display: flex; align-items: center; justify-content: center;
+      position: relative; padding: 0.8rem 1rem 0;
+      flex-shrink: 0;
+    }
     .evt-bs-handle {
       width: 32px; height: 3px; border-radius: 2px;
-      background: rgba(255,255,255,0.14); margin: 0.8rem auto 0;
+      background: rgba(255,255,255,0.14);
     }
+    .evt-bs-close-btn {
+      position: absolute; right: 0.8rem; top: 50%;
+      transform: translateY(-50%);
+      background: transparent; border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.45);
+      font-family: var(--font-body); font-size: 0.7rem;
+      width: 30px; height: 30px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; touch-action: manipulation;
+      transition: border-color 0.2s, color 0.2s;
+      line-height: 1;
+    }
+    .evt-bs-close-btn:hover { border-color: var(--red); color: var(--red); }
     .evt-bs-event-info {
       padding: 1.1rem 1.4rem 0.85rem;
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -1179,7 +1198,10 @@
   <div class="evt-bottom-sheet" id="evt-bottom-sheet">
     <div class="evt-bs-backdrop"></div>
     <div class="evt-bs-panel">
-      <div class="evt-bs-handle"></div>
+      <div class="evt-bs-topbar">
+        <div class="evt-bs-handle"></div>
+        <button class="evt-bs-close-btn" id="evt-bs-close-btn">✕</button>
+      </div>
       <div class="evt-bs-event-info">
         <span class="evt-bs-event-name" id="evt-bs-name"></span>
         <div class="evt-bs-event-meta">
