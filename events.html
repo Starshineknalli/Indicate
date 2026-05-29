@@ -430,10 +430,19 @@
       padding-bottom: 36px;
     }
 
-    /* ── Body — content aligned toward bottom ── */
+    /* ── Background countdown watermark ── */
+    .evt-mob-bg-cd {
+      position: absolute; right: -0.06em; bottom: 62px; z-index: 3;
+      font-family: var(--font-head); font-size: 72vw; line-height: 0.75;
+      color: rgba(255,255,255,0.038); pointer-events: none; user-select: none;
+      letter-spacing: -0.03em;
+    }
+    @media (min-width: 601px) { .evt-mob-bg-cd { font-size: 38vw; } }
+
+    /* ── Body — content aligned toward bottom with nav clearance ── */
     .evt-mob-body {
       flex: 1; display: flex; flex-direction: column;
-      justify-content: flex-end; padding: 0 2.8rem 1.4rem;
+      justify-content: flex-end; padding: 5rem 2.8rem 1.4rem;
     }
 
     /* Giant date — most dominant element */
@@ -459,9 +468,21 @@
       letter-spacing: 0.04em; color: var(--white);
       margin-bottom: 0.5rem; line-height: 0.95;
     }
+    /* Venue + time on one row */
+    .evt-mob-venue-row {
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: 0.5rem; margin-bottom: 1.6rem;
+    }
     .evt-mob-venue {
       font-size: 0.6rem; letter-spacing: 0.3em;
-      color: rgba(255,255,255,0.52); margin-bottom: 1.6rem;
+      color: rgba(255,255,255,0.52);
+    }
+    .evt-mob-venue-sep {
+      color: var(--red); font-size: 0.55rem; opacity: 0.55;
+    }
+    .evt-mob-time {
+      font-size: 0.52rem; letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.28);
     }
 
     /* Countdown — inline (used in bottom sheet) */
@@ -589,13 +610,13 @@
 
     /* ── Mobile tweaks ── */
     @media (max-width: 600px) {
-      .evt-mob-body    { padding: 0 1.4rem 1.2rem; }
+      .evt-mob-body    { padding: 4.5rem 1.4rem 1.2rem; }
       .events-progress { right: 0.5rem; }
     }
 
     /* ── Desktop tweaks ── */
     @media (min-width: 601px) {
-      .evt-mob-body { padding: 0 3rem 1.4rem; max-width: 860px; }
+      .evt-mob-body { padding: 5.5rem 3rem 1.4rem; max-width: 860px; }
     }
 
     /* ══════════════════════════════════════════════════

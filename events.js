@@ -516,6 +516,14 @@
       const isSoon   = !ev.isPast && !!screen.querySelector('.event-ticket-btn.soon');
       const isPast   = ev.isPast || screen.classList.contains('event-screen--past');
 
+      // Venue + time on one row
+      const venueRow = `
+        <div class="evt-mob-venue-row">
+          <span class="evt-mob-venue">${ev.venue}</span>
+          <span class="evt-mob-venue-sep">·</span>
+          <span class="evt-mob-time">${ev.time}</span>
+        </div>`;
+
       // Lineup teaser — first 2 artists
       const teaserArtists = ev.lineup.slice(0, 2);
       const teaserMore    = ev.lineup.length > 2
@@ -534,7 +542,7 @@
       const pastBadge = isPast
         ? `<span class="evt-mob-past-badge">ABGESCHLOSSEN</span>` : '';
 
-      // Tap hint (for tappable slides)
+      // Tap hint
       const tapHint = `
         <div class="evt-mob-tap-hint">
           <span class="evt-mob-tap-line"></span>
@@ -548,7 +556,7 @@
           <span class="evt-mob-year">${year}</span>
           <div class="evt-mob-divider"></div>
           <div class="evt-mob-name">${ev.name}</div>
-          <div class="evt-mob-venue">${ev.venue}</div>
+          ${venueRow}
           ${pastBadge}
           ${lineupTeaser}
           ${tapHint}
@@ -568,6 +576,14 @@
       }
       const strip = `<div class="${stripClass}" data-strip-idx="${idx}">${stripInner}</div>`;
 
+      // Background countdown watermark (upcoming events only)
+      if (!isPast && ev.countdownDate) {
+        const bgCd = document.createElement('div');
+        bgCd.className = 'evt-mob-bg-cd';
+        bgCd.dataset.bgDate = ev.countdownDate;
+        screen.appendChild(bgCd);
+      }
+
       const slide = document.createElement('div');
       slide.className = 'evt-mobile-slide';
       slide.innerHTML = body + strip;
@@ -577,6 +593,19 @@
       screen.querySelector('.event-content')?.remove();
       screen.querySelector('.event-action-bar')?.remove();
       screen.querySelector('.event-bg-date')?.remove();
+    });
+
+    // Background countdown watermarks
+    function updateBgCd(el) {
+      const diff = new Date(el.dataset.bgDate) - Date.now();
+      if (diff <= 0) { el.textContent = ''; return; }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      el.textContent = d > 0 ? String(d) : String(h).padStart(2, '0');
+    }
+    document.querySelectorAll('.evt-mob-bg-cd').forEach(el => {
+      updateBgCd(el);
+      setInterval(() => updateBgCd(el), 60000); // update every minute
     });
 
     // Lineup teaser clicks
