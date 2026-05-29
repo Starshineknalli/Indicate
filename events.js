@@ -378,23 +378,16 @@
       const s = Math.floor((diff % 60000)    / 1000);
       el.innerHTML = `
         <div class="evt-mob-cd-unit">
-          <span class="evt-mob-cd-num">${String(d).padStart(2,'0')}</span>
-          <span class="evt-mob-cd-lbl">TAGE</span>
+          <span class="evt-mob-cd-num">${String(d).padStart(2,'0')}</span><span class="evt-mob-cd-lbl">T</span>
         </div>
-        <span class="evt-mob-cd-sep">:</span>
         <div class="evt-mob-cd-unit">
-          <span class="evt-mob-cd-num">${String(h).padStart(2,'0')}</span>
-          <span class="evt-mob-cd-lbl">STD</span>
+          <span class="evt-mob-cd-num">${String(h).padStart(2,'0')}</span><span class="evt-mob-cd-lbl">H</span>
         </div>
-        <span class="evt-mob-cd-sep">:</span>
         <div class="evt-mob-cd-unit">
-          <span class="evt-mob-cd-num">${String(m).padStart(2,'0')}</span>
-          <span class="evt-mob-cd-lbl">MIN</span>
+          <span class="evt-mob-cd-num">${String(m).padStart(2,'0')}</span><span class="evt-mob-cd-lbl">M</span>
         </div>
-        <span class="evt-mob-cd-sep">:</span>
         <div class="evt-mob-cd-unit">
-          <span class="evt-mob-cd-num">${String(s).padStart(2,'0')}</span>
-          <span class="evt-mob-cd-lbl">SEK</span>
+          <span class="evt-mob-cd-num">${String(s).padStart(2,'0')}</span><span class="evt-mob-cd-lbl">S</span>
         </div>
       `;
     }
@@ -552,6 +545,11 @@
       slide.className = 'evt-mobile-slide';
       slide.innerHTML = topBar + body + strip;
       screen.appendChild(slide);
+
+      // Remove old elements from DOM entirely (more reliable than CSS hide)
+      screen.querySelector('.event-content')?.remove();
+      screen.querySelector('.event-action-bar')?.remove();
+      screen.querySelector('.event-bg-date')?.remove();
     });
 
     // Build mobile countdowns
