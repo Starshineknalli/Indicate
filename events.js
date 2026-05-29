@@ -356,13 +356,20 @@
 
   btnClose.addEventListener('click', closeEventDetail);
 
-  // Click on event screen → open detail
+  // Click on event screen → bottom sheet (upcoming) or detail panel (past)
   document.querySelectorAll('.event-screen').forEach(screen => {
     screen.addEventListener('click', (e) => {
-      if (e.target.classList.contains('event-ticket-btn')) return;
-      if (e.target.closest('.evt-ticket-strip') || e.target.closest('.evt-mob-lineup-hint')) return;
-      const id = parseInt(screen.dataset.eventId, 10);
-      if (!isNaN(id)) openEventDetail(id);
+      if (e.target.closest('.evt-ticket-strip')) return;
+      if (e.target.closest('.evt-mob-lineup-teaser')) return;
+      const id  = parseInt(screen.dataset.eventId, 10);
+      if (isNaN(id)) return;
+      const ev  = EVENT_DATA[id];
+      if (!ev) return;
+      if (ev.isPast || screen.classList.contains('event-screen--past')) {
+        openEventDetail(id);
+      } else {
+        openBottomSheet(id, 'tickets');
+      }
     });
   });
 
@@ -392,13 +399,14 @@
       `;
     }
     update();
-    setInterval(update, 1000);
+    return setInterval(update, 1000);
   }
 
   // ── BOTTOM SHEET ──────────────────────────────────────────────────────────
   const bottomSheet = document.getElementById('evt-bottom-sheet');
   const bsBackdrop  = bottomSheet.querySelector('.evt-bs-backdrop');
   const bsPanel     = bottomSheet.querySelector('.evt-bs-panel');
+  let   bsCdInterval = null;
   const bsNameEl    = document.getElementById('evt-bs-name');
   const bsVenueEl   = document.getElementById('evt-bs-venue');
   const bsDateEl    = document.getElementById('evt-bs-date');
@@ -428,6 +436,17 @@
     bsVenueEl.textContent = ev.venue;
     bsDateEl.textContent  = ev.date;
     bsTimeEl.textContent  = ev.time;
+
+    // Countdown im Bottom Sheet
+    const cdEl = document.getElementById('evt-bs-countdown');
+    clearInterval(bsCdInterval);
+    if (cdEl) {
+      if (!ev.isPast && ev.countdownDate) {
+        bsCdInterval = buildMobileCountdown(cdEl, ev.countdownDate);
+      } else {
+        cdEl.innerHTML = '';
+      }
+    }
 
     if (ev.tickets && ev.tickets.length) {
       bsTicketsEl.innerHTML = ev.tickets.map(t => `
@@ -479,14 +498,16 @@
   function closeBottomSheet() {
     bottomSheet.classList.remove('open');
     document.body.style.overflow = '';
+    clearInterval(bsCdInterval);
+    bsCdInterval = null;
   }
 
   // ── INJECT MOBILE SLIDES ──────────────────────────────────────────────────
   function injectMobileSlides() {
     document.querySelectorAll('.event-screen').forEach(screen => {
-      const idx    = parseInt(screen.dataset.eventId, 10);
+      const idx  = parseInt(screen.dataset.eventId, 10);
       if (isNaN(idx)) return;
-      const ev     = EVENT_DATA[idx];
+      const ev   = EVENT_DATA[idx];
       if (!ev) return;
 
       const parts    = ev.date.split('.');
@@ -495,25 +516,31 @@
       const isSoon   = !ev.isPast && !!screen.querySelector('.event-ticket-btn.soon');
       const isPast   = ev.isPast || screen.classList.contains('event-screen--past');
 
-      // Top bar
-      const topBar = `
-        <div class="evt-mob-topbar">
-          <img src="logo-mark.svg" class="evt-mob-logo-img" alt="INDICATE">
-          <span class="evt-mob-evtnum">${ev.num}</span>
+      // Lineup teaser — first 2 artists
+      const teaserArtists = ev.lineup.slice(0, 2);
+      const teaserMore    = ev.lineup.length > 2
+        ? `<span class="evt-mob-teaser-more">+${ev.lineup.length - 2} MORE</span>` : '';
+      const lineupTeaser  = `
+        <div class="evt-mob-lineup-teaser" data-lineup-idx="${idx}">
+          ${teaserArtists.map((a, i) => `
+            <div class="evt-mob-teaser-item">
+              <span class="evt-mob-teaser-num">0${i + 1}</span>
+              <span class="evt-mob-teaser-name">${a}</span>
+            </div>`).join('')}
+          ${teaserMore}
         </div>`;
 
-      // Middle section
-      let statusHtml = '';
-      if (isPast) {
-        statusHtml = `<span class="evt-mob-past-badge">ABGESCHLOSSEN</span>`;
-      } else {
-        statusHtml = `<div class="evt-mob-countdown" data-mob-cd="${ev.countdownDate}"></div>`;
-      }
-      const lineupHint = !isPast
-        ? `<button class="evt-mob-lineup-hint" data-lineup-idx="${idx}">
-             <span class="lh-dot"></span>LINEUP ANSEHEN
-           </button>`
-        : '';
+      // Past badge
+      const pastBadge = isPast
+        ? `<span class="evt-mob-past-badge">ABGESCHLOSSEN</span>` : '';
+
+      // Tap hint (for tappable slides)
+      const tapHint = `
+        <div class="evt-mob-tap-hint">
+          <span class="evt-mob-tap-line"></span>
+          <span class="evt-mob-tap-text">DETAILS</span>
+          <span class="evt-mob-tap-line"></span>
+        </div>`;
 
       const body = `
         <div class="evt-mob-body">
@@ -522,9 +549,9 @@
           <div class="evt-mob-divider"></div>
           <div class="evt-mob-name">${ev.name}</div>
           <div class="evt-mob-venue">${ev.venue}</div>
-          <div class="evt-mob-time">${ev.time}</div>
-          ${statusHtml}
-          ${lineupHint}
+          ${pastBadge}
+          ${lineupTeaser}
+          ${tapHint}
         </div>`;
 
       // Ticket strip
@@ -543,25 +570,20 @@
 
       const slide = document.createElement('div');
       slide.className = 'evt-mobile-slide';
-      slide.innerHTML = topBar + body + strip;
+      slide.innerHTML = body + strip;
       screen.appendChild(slide);
 
-      // Remove old elements from DOM entirely (more reliable than CSS hide)
+      // Remove old elements from DOM
       screen.querySelector('.event-content')?.remove();
       screen.querySelector('.event-action-bar')?.remove();
       screen.querySelector('.event-bg-date')?.remove();
     });
 
-    // Build mobile countdowns
-    document.querySelectorAll('[data-mob-cd]').forEach(el => {
-      buildMobileCountdown(el, el.dataset.mobCd);
-    });
-
-    // Lineup hint clicks
-    document.querySelectorAll('.evt-mob-lineup-hint').forEach(btn => {
-      btn.addEventListener('click', e => {
+    // Lineup teaser clicks
+    document.querySelectorAll('.evt-mob-lineup-teaser').forEach(el => {
+      el.addEventListener('click', e => {
         e.stopPropagation();
-        openBottomSheet(parseInt(btn.dataset.lineupIdx, 10), 'lineup');
+        openBottomSheet(parseInt(el.dataset.lineupIdx, 10), 'lineup');
       });
     });
 
