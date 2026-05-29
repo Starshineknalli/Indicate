@@ -461,7 +461,29 @@
     bsDragging = false;
   }, { passive: true });
 
-  const PWYW_PRICES = [11, 13, 15, 18];
+  const PWYW_TIERS = [
+    {
+      price: 11, cls: 'evt-bs-tier--solidarity',
+      label: 'AUF UNTERSTÜTZUNG',
+      sub:   'andere machen diesen Preis für dich möglich',
+    },
+    {
+      price: 13, cls: '',
+      label: 'BASIS',
+      sub:   '',
+    },
+    {
+      price: 15, cls: 'evt-bs-tier--recommended',
+      label: 'FAIR',
+      sub:   '',
+      badge: '★ MEIST GEWÄHLT',
+    },
+    {
+      price: 18, cls: 'evt-bs-tier--supporter',
+      label: 'SUPPORTER',
+      sub:   'du machst günstige Tickets für andere möglich',
+    },
+  ];
 
   function openBottomSheet(eventIdx, tab) {
     const ev = EVENT_DATA[eventIdx];
@@ -497,23 +519,27 @@
       bsTicketsEl.innerHTML = `
         <div class="evt-bs-pwyw-intro">
           <span class="evt-bs-pwyw-title">PAY WHAT YOU WANT</span>
-          <p class="evt-bs-pwyw-text">Zahle was du für richtig empfindest. Die günstigeren Tickets sind für alle, die sich gerade nicht mehr leisten können — wer mehr zahlt, ermöglicht das.</p>
+          <p class="evt-bs-pwyw-text">Zahle was du für richtig empfindest. Wer mehr zahlt, ermöglicht günstigere Tickets für andere.</p>
         </div>
-        <div class="evt-bs-price-grid">
-          ${PWYW_PRICES.map(p => `
-            <button class="evt-bs-price-btn" data-price="${p}">
-              <span class="evt-bs-price-eur">€</span>
-              <span class="evt-bs-price-num">${p}</span>
-            </button>
+        <div class="evt-bs-tiers">
+          ${PWYW_TIERS.map(t => `
+            <div class="evt-bs-tier ${t.cls}" data-price="${t.price}">
+              ${t.badge ? `<span class="evt-bs-tier-badge">${t.badge}</span>` : ''}
+              <div class="evt-bs-tier-info">
+                <span class="evt-bs-tier-label">${t.label}</span>
+                ${t.sub ? `<span class="evt-bs-tier-sub">${t.sub}</span>` : ''}
+              </div>
+              <span class="evt-bs-tier-price">€${t.price}</span>
+            </div>
           `).join('')}
         </div>
         <div class="evt-bs-price-incl">inkl. Bier oder Powerade</div>
       `;
-      bsTicketsEl.querySelectorAll('.evt-bs-price-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          bsTicketsEl.querySelectorAll('.evt-bs-price-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          bsCtaEl.textContent = `ZUR KASSE · €${btn.dataset.price}`;
+      bsTicketsEl.querySelectorAll('.evt-bs-tier').forEach(tier => {
+        tier.addEventListener('click', () => {
+          bsTicketsEl.querySelectorAll('.evt-bs-tier').forEach(t => t.classList.remove('active'));
+          tier.classList.add('active');
+          bsCtaEl.textContent = `ZUR KASSE · €${tier.dataset.price}`;
           bsCtaEl.className   = 'evt-bs-cta';
         });
       });

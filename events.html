@@ -682,16 +682,15 @@
       background: rgba(255,255,255,0.14);
     }
     .evt-bs-close-btn {
-      position: absolute; right: 0.8rem; top: 50%;
+      position: absolute; right: 1rem; top: 50%;
       transform: translateY(-50%);
-      background: transparent; border: 1px solid rgba(255,255,255,0.12);
+      background: transparent; border: 1px solid rgba(255,255,255,0.14);
       color: rgba(255,255,255,0.45);
-      font-family: var(--font-body); font-size: 0.7rem;
-      width: 30px; height: 30px;
+      font-size: 0.75rem; line-height: 1;
+      width: 34px; height: 34px; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; touch-action: manipulation;
       transition: border-color 0.2s, color 0.2s;
-      line-height: 1;
     }
     .evt-bs-close-btn:hover { border-color: var(--red); color: var(--red); }
     .evt-bs-event-info {
@@ -755,51 +754,87 @@
     }
     .evt-bs-photo:hover { filter: grayscale(50%) brightness(0.75); }
 
-    /* ── PWYW tickets ── */
+    /* ── PWYW intro ── */
     .evt-bs-pwyw-intro {
-      padding: 1.4rem 1.4rem 0.6rem;
+      padding: 1.2rem 1.4rem 0.5rem;
     }
     .evt-bs-pwyw-title {
       font-family: var(--font-body); font-size: 0.48rem;
       letter-spacing: 0.48em; color: var(--red);
-      display: block; margin-bottom: 0.6rem;
+      display: block; margin-bottom: 0.5rem;
     }
     .evt-bs-pwyw-text {
-      font-family: var(--font-body); font-size: 0.5rem;
-      letter-spacing: 0.1em; line-height: 1.9;
-      color: rgba(255,255,255,0.38);
+      font-family: var(--font-body); font-size: 0.48rem;
+      letter-spacing: 0.08em; line-height: 1.85;
+      color: rgba(255,255,255,0.35);
     }
-    .evt-bs-price-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 6px; padding: 1rem 1.4rem 0;
-    }
-    .evt-bs-price-btn {
-      display: flex; flex-direction: column; align-items: center;
-      justify-content: center; padding: 0.9rem 0.3rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.1);
+
+    /* ── Tier list ── */
+    .evt-bs-tiers { padding: 0.5rem 0 0; }
+
+    .evt-bs-tier {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.95rem 1.4rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
       cursor: pointer; touch-action: manipulation;
-      transition: background 0.18s, border-color 0.18s;
-      gap: 0.15rem;
+      position: relative; transition: background 0.15s;
     }
-    .evt-bs-price-btn:hover { background: rgba(255,255,255,0.07); }
-    .evt-bs-price-btn.active {
-      background: rgba(224,0,0,0.12);
-      border-color: var(--red);
+    .evt-bs-tier:active { background: rgba(255,255,255,0.03); }
+    .evt-bs-tier.active { background: rgba(224,0,0,0.09); }
+
+    .evt-bs-tier-info { flex: 1; min-width: 0; }
+    .evt-bs-tier-label {
+      font-family: var(--font-head); font-size: 1.35rem;
+      letter-spacing: 0.07em; color: var(--white);
+      display: block; line-height: 1;
     }
-    .evt-bs-price-eur {
-      font-family: var(--font-body); font-size: 0.4rem;
-      color: var(--grey); letter-spacing: 0.05em;
+    .evt-bs-tier-sub {
+      font-size: 0.4rem; letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.3); margin-top: 0.2rem; display: block;
     }
-    .evt-bs-price-num {
-      font-family: var(--font-head); font-size: 1.8rem;
-      color: var(--white); line-height: 1; letter-spacing: 0.02em;
+    .evt-bs-tier-price {
+      font-family: var(--font-head); font-size: 1.9rem;
+      letter-spacing: 0.02em; color: var(--white); flex-shrink: 0;
+      transition: color 0.18s;
     }
-    .evt-bs-price-btn.active .evt-bs-price-num { color: var(--red); }
+    .evt-bs-tier.active .evt-bs-tier-label { color: var(--red); }
+    .evt-bs-tier.active .evt-bs-tier-price  { color: var(--red); }
+
+    /* Solidarity tier — faded, implies receiving support */
+    .evt-bs-tier--solidarity {
+      opacity: 0.55;
+    }
+    .evt-bs-tier--solidarity .evt-bs-tier-label { font-size: 1.1rem; }
+    .evt-bs-tier--solidarity:hover { opacity: 0.75; }
+
+    /* Recommended badge */
+    .evt-bs-tier-badge {
+      position: absolute; top: 0; left: 0; right: 0;
+      font-family: var(--font-body); font-size: 0.36rem;
+      letter-spacing: 0.45em; color: var(--red); text-align: center;
+      padding: 0.18rem 0;
+      background: rgba(224,0,0,0.1);
+      border-bottom: 1px solid rgba(224,0,0,0.18);
+    }
+    .evt-bs-tier--recommended {
+      padding-top: 1.55rem;
+      border-left: 1px solid rgba(224,0,0,0.22);
+      border-right: 1px solid rgba(224,0,0,0.22);
+      border-bottom: 1px solid rgba(224,0,0,0.22);
+    }
+    .evt-bs-tier--recommended .evt-bs-tier-label { color: rgba(255,255,255,0.95); }
+    .evt-bs-tier--recommended.active {
+      background: rgba(224,0,0,0.12) !important;
+      border-color: var(--red) !important;
+    }
+
+    /* Supporter tier — premium feel */
+    .evt-bs-tier--supporter .evt-bs-tier-label { font-size: 1.45rem; }
+
     .evt-bs-price-incl {
       font-family: var(--font-body); font-size: 0.42rem;
-      letter-spacing: 0.25em; color: rgba(255,255,255,0.28);
-      text-align: center; padding: 0.7rem 1.4rem 1rem;
+      letter-spacing: 0.25em; color: rgba(255,255,255,0.25);
+      text-align: center; padding: 0.7rem 1.4rem 0.9rem;
     }
 
     .evt-bs-no-tickets { padding: 2.5rem 1.4rem; text-align: center; }
