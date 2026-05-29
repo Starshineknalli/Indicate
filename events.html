@@ -387,6 +387,307 @@
       .edp-event-title { font-size: clamp(2.5rem, 10vw, 5rem); }
       .edp-lineup-artist { font-size: 1.6rem; }
     }
+
+    /* ══════════════════════════════════════════════════
+       TICKET SLIDES — alle Viewports
+    ══════════════════════════════════════════════════ */
+
+    /* Klassisches Desktop-Layout immer ausblenden */
+    .event-content    { display: none !important; }
+    .event-action-bar { display: none !important; }
+    .event-bg-date    { display: none !important; }
+
+    /* ── Ticket slide — alle Viewports ── */
+    .evt-mobile-slide {
+      position: absolute; inset: 0; z-index: 10;
+      display: flex; flex-direction: column;
+      padding-bottom: 36px;
+    }
+
+    .evt-mob-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 5rem 2.8rem 0.5rem; flex-shrink: 0;
+    }
+    .evt-mob-logo-img {
+      height: 24px; width: auto; opacity: 0.5;
+      filter: drop-shadow(0 0 6px rgba(224,0,0,0.5));
+    }
+    .evt-mob-evtnum {
+      font-family: var(--font-body);
+      font-size: 0.52rem; letter-spacing: 0.44em;
+      color: rgba(255,255,255,0.28);
+    }
+
+    .evt-mob-body {
+      flex: 1; display: flex; flex-direction: column;
+      justify-content: center; padding: 0 2.8rem 1rem;
+    }
+    .evt-mob-date {
+      font-family: var(--font-head);
+      font-size: clamp(5rem, 16vw, 11rem);
+      line-height: 0.88; letter-spacing: 0.02em; color: var(--white);
+    }
+    .evt-mob-year {
+      font-family: var(--font-head);
+      font-size: clamp(1.5rem, 5vw, 3.5rem);
+      color: rgba(255,255,255,0.26); letter-spacing: 0.1em;
+      margin-bottom: 1.4rem; display: block;
+    }
+    .evt-mob-divider {
+      width: 28px; height: 2px; background: var(--red);
+      margin-bottom: 1rem; flex-shrink: 0;
+    }
+    .evt-mob-name {
+      font-family: var(--font-head);
+      font-size: clamp(2rem, 6.5vw, 5rem);
+      letter-spacing: 0.05em; color: var(--white);
+      margin-bottom: 0.45rem; line-height: 1;
+    }
+    .evt-mob-venue {
+      font-size: clamp(0.55rem, 1.1vw, 0.7rem);
+      letter-spacing: 0.26em; color: var(--grey); margin-bottom: 0.18rem;
+    }
+    .evt-mob-time {
+      font-size: clamp(0.5rem, 1vw, 0.65rem);
+      letter-spacing: 0.18em; color: rgba(136,136,136,0.52); margin-bottom: 1.3rem;
+    }
+
+    .evt-mob-countdown {
+      display: flex; align-items: flex-start;
+      flex-wrap: nowrap; gap: 0; margin-bottom: 0.9rem; max-width: 340px;
+    }
+    .evt-mob-cd-unit {
+      display: flex; flex-direction: column; align-items: center; flex: 1;
+    }
+    .evt-mob-cd-num {
+      font-family: var(--font-head);
+      font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+      line-height: 1; color: var(--red); display: block;
+    }
+    .evt-mob-cd-lbl {
+      font-size: clamp(0.37rem, 0.75vw, 0.48rem); letter-spacing: 0.25em;
+      color: var(--grey-dim); margin-top: 0.12rem; display: block;
+    }
+    .evt-mob-cd-sep {
+      font-family: var(--font-head);
+      font-size: clamp(1.4rem, 3vw, 2.4rem); color: rgba(51,51,51,0.65);
+      padding: 0 0.06rem; flex-shrink: 0;
+    }
+
+    .evt-mob-past-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.52rem; letter-spacing: 0.32em;
+      color: rgba(255,255,255,0.26);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 0.4rem 0.8rem; margin-bottom: 0.9rem;
+    }
+    .evt-mob-past-badge::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.16);
+    }
+
+    .evt-mob-lineup-hint {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: transparent; border: none; padding: 0;
+      font-family: var(--font-body);
+      font-size: 0.5rem; letter-spacing: 0.4em;
+      color: rgba(255,255,255,0.26); cursor: pointer; touch-action: manipulation;
+      transition: color 0.2s;
+    }
+    .evt-mob-lineup-hint:hover { color: rgba(255,255,255,0.5); }
+    .evt-mob-lineup-hint .lh-dot {
+      width: 4px; height: 4px; border-radius: 50%;
+      background: var(--red); flex-shrink: 0;
+    }
+
+    .evt-ticket-strip {
+      flex-shrink: 0; position: relative; height: 60px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.8rem; cursor: pointer; touch-action: manipulation;
+      overflow: hidden; background: var(--red); transition: background 0.18s;
+    }
+    .evt-ticket-strip::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: repeating-linear-gradient(90deg,
+        rgba(0,0,0,0) 0px, rgba(0,0,0,0) 6px,
+        rgba(0,0,0,0.2) 6px, rgba(0,0,0,0.2) 8px);
+    }
+    .evt-ticket-strip:hover  { background: #c80000; }
+    .evt-ticket-strip:active { background: #aa0000; }
+    .evt-ticket-strip-text {
+      font-family: var(--font-body);
+      font-size: 0.6rem; letter-spacing: 0.5em; color: #fff;
+      position: relative; z-index: 1;
+    }
+    .evt-ticket-strip-arrow {
+      font-size: 1.1rem; color: rgba(255,255,255,0.62);
+      position: relative; z-index: 1; display: inline-block;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .evt-ticket-strip:hover  .evt-ticket-strip-arrow { transform: translateY(-4px); }
+    .evt-ticket-strip:active .evt-ticket-strip-arrow { transform: translateY(-6px); }
+
+    .evt-ticket-strip--soon {
+      background: rgba(255,255,255,0.04) !important;
+      border-top: 1px solid rgba(255,255,255,0.07); cursor: default;
+    }
+    .evt-ticket-strip--soon:hover { background: rgba(255,255,255,0.04) !important; }
+    .evt-ticket-strip--soon .evt-ticket-strip-text  { color: rgba(255,255,255,0.2); }
+    .evt-ticket-strip--soon .evt-ticket-strip-arrow { display: none; }
+
+    .evt-ticket-strip--past {
+      background: rgba(255,255,255,0.03) !important;
+      border-top: 1px solid rgba(255,255,255,0.07); cursor: pointer;
+    }
+    .evt-ticket-strip--past:hover { background: rgba(255,255,255,0.06) !important; }
+    .evt-ticket-strip--past .evt-ticket-strip-text  { color: rgba(255,255,255,0.26); }
+    .evt-ticket-strip--past .evt-ticket-strip-arrow { color: rgba(255,255,255,0.26); }
+    .evt-ticket-strip--past:hover .evt-ticket-strip-arrow { transform: translateX(4px); }
+
+    /* ── Mobile tweaks ── */
+    @media (max-width: 600px) {
+      .evt-mob-topbar    { padding: 4rem 1.3rem 0.5rem; }
+      .evt-mob-body      { padding: 0 1.3rem 0.8rem; }
+      .evt-mob-countdown { max-width: none; }
+      .events-progress   { right: 0.4rem; gap: 0.4rem; }
+      .progress-dot      { padding: 8px; margin: -8px; box-sizing: content-box; }
+    }
+
+    /* ── Desktop tweaks ── */
+    @media (min-width: 601px) {
+      /* Nav already shows the logo — hide redundant slide logo */
+      .evt-mob-logo-img { display: none; }
+    }
+
+    /* ══════════════════════════════════════════════════
+       BOTTOM SHEET
+    ══════════════════════════════════════════════════ */
+    .evt-bottom-sheet {
+      position: fixed; inset: 0; z-index: 500;
+      pointer-events: none; visibility: hidden;
+    }
+    .evt-bottom-sheet.open { pointer-events: all; visibility: visible; }
+
+    .evt-bs-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0); backdrop-filter: blur(0px);
+      transition: background 0.38s, backdrop-filter 0.38s; cursor: pointer;
+    }
+    .evt-bottom-sheet.open .evt-bs-backdrop {
+      background: rgba(0,0,0,0.78); backdrop-filter: blur(5px);
+    }
+    .evt-bs-panel {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: #080808; border-top: 1px solid rgba(255,255,255,0.09);
+      transform: translateY(100%);
+      transition: transform 0.42s cubic-bezier(0.32,0.72,0,1);
+      max-height: 86vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    .evt-bottom-sheet.open .evt-bs-panel { transform: translateY(0); }
+    .evt-bs-panel::-webkit-scrollbar { display: none; }
+
+    @media (min-width: 601px) {
+      .evt-bs-panel {
+        left: 50%; right: auto; width: 520px; margin-left: -260px;
+        border-left: 1px solid rgba(255,255,255,0.09);
+        border-right: 1px solid rgba(255,255,255,0.09);
+        max-height: 80vh;
+      }
+    }
+
+    .evt-bs-handle {
+      width: 32px; height: 3px; border-radius: 2px;
+      background: rgba(255,255,255,0.14); margin: 0.8rem auto 0;
+    }
+    .evt-bs-event-info {
+      padding: 1.1rem 1.4rem 0.85rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .evt-bs-event-name {
+      font-family: var(--font-head);
+      font-size: clamp(1.8rem, 7vw, 2.8rem);
+      letter-spacing: 0.05em; color: var(--white);
+      display: block; margin-bottom: 0.35rem;
+    }
+    .evt-bs-event-meta { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .evt-bs-event-meta span {
+      font-size: 0.47rem; letter-spacing: 0.26em; color: var(--grey);
+    }
+    .evt-bs-tabs { display: flex; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .evt-bs-tab {
+      flex: 1; padding: 0.85rem; background: transparent; border: none;
+      border-bottom: 2px solid transparent;
+      font-family: var(--font-body); font-size: 0.47rem; letter-spacing: 0.42em;
+      color: rgba(255,255,255,0.28); cursor: pointer; touch-action: manipulation;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .evt-bs-tab.active { color: var(--white); border-bottom-color: var(--red); }
+
+    .evt-ticket-tier {
+      display: flex; align-items: center; padding: 1.1rem 1.4rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      gap: 1rem; cursor: pointer; transition: background 0.15s;
+    }
+    .evt-ticket-tier:hover  { background: rgba(255,255,255,0.03); }
+    .evt-ticket-tier:active { background: rgba(255,255,255,0.05); }
+    .evt-tier-info { flex: 1; }
+    .evt-tier-name {
+      font-family: var(--font-head); font-size: 1.5rem;
+      letter-spacing: 0.06em; color: var(--white); display: block; line-height: 1;
+    }
+    .evt-tier-sub {
+      font-size: 0.44rem; letter-spacing: 0.3em;
+      color: var(--grey); margin-top: 0.2rem; display: block;
+    }
+    .evt-tier-price {
+      font-family: var(--font-head); font-size: 1.7rem;
+      color: var(--white); letter-spacing: 0.02em;
+    }
+    .evt-tier-currency {
+      font-size: 0.85rem; vertical-align: top;
+      margin-top: 0.35rem; display: inline-block; color: var(--grey);
+    }
+    .evt-bs-no-tickets { padding: 2.5rem 1.4rem; text-align: center; }
+    .evt-bs-no-tickets span {
+      font-size: 0.52rem; letter-spacing: 0.42em; color: rgba(255,255,255,0.26);
+    }
+    .evt-bs-lineup-list { padding: 0.4rem 0; }
+    .evt-bs-lineup-item {
+      display: flex; align-items: center; padding: 0.9rem 1.4rem;
+      border-bottom: 1px solid rgba(255,255,255,0.04); gap: 0.8rem;
+    }
+    .evt-bs-lineup-num {
+      font-family: var(--font-body); font-size: 0.43rem; letter-spacing: 0.28em;
+      color: var(--red); flex-shrink: 0; width: 26px;
+    }
+    .evt-bs-lineup-name {
+      font-family: var(--font-head); font-size: clamp(1.5rem, 3vw, 2.4rem);
+      letter-spacing: 0.05em; color: var(--white); flex: 1;
+    }
+    .evt-bs-lineup-accent {
+      width: 2px; height: 14px; background: var(--red);
+      opacity: 0.42; flex-shrink: 0;
+    }
+    .evt-bs-footer {
+      padding: 0.9rem 1.4rem;
+      padding-bottom: calc(0.9rem + env(safe-area-inset-bottom, 12px));
+      border-top: 1px solid rgba(255,255,255,0.06);
+      background: #080808; position: sticky; bottom: 0;
+    }
+    .evt-bs-cta {
+      width: 100%; padding: 1rem; background: var(--red); border: none;
+      font-family: var(--font-body); font-size: 0.6rem; letter-spacing: 0.5em;
+      color: #fff; cursor: pointer; touch-action: manipulation;
+      transition: background 0.2s;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    }
+    .evt-bs-cta:hover  { background: #c80000; }
+    .evt-bs-cta:active { background: #aa0000; }
+    .evt-bs-cta.soon-cta {
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.26); cursor: default;
+    }
+    .evt-bs-cta.soon-cta:hover { background: rgba(255,255,255,0.05); }
   </style>
 </head>
 <body>
@@ -735,6 +1036,31 @@
     <a href="impressum.html">IMPRESSUM</a>
     <div class="legal-bar-sep"></div>
     <a href="datenschutz.html">DATENSCHUTZ</a>
+  </div>
+
+  <!-- MOBILE BOTTOM SHEET -->
+  <div class="evt-bottom-sheet" id="evt-bottom-sheet">
+    <div class="evt-bs-backdrop"></div>
+    <div class="evt-bs-panel">
+      <div class="evt-bs-handle"></div>
+      <div class="evt-bs-event-info">
+        <span class="evt-bs-event-name" id="evt-bs-name"></span>
+        <div class="evt-bs-event-meta">
+          <span id="evt-bs-venue"></span>
+          <span id="evt-bs-date"></span>
+          <span id="evt-bs-time"></span>
+        </div>
+      </div>
+      <div class="evt-bs-tabs">
+        <button class="evt-bs-tab active" data-tab="tickets">TICKETS</button>
+        <button class="evt-bs-tab" data-tab="lineup">LINEUP</button>
+      </div>
+      <div id="evt-bs-tickets"></div>
+      <div id="evt-bs-lineup" style="display:none"></div>
+      <div class="evt-bs-footer">
+        <button class="evt-bs-cta" id="evt-bs-cta">ZUR KASSE</button>
+      </div>
+    </div>
   </div>
 
   <script src="shared.js"></script>

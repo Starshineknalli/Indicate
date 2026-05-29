@@ -13,6 +13,11 @@
       time:   '23:00 — OPEN END',
       lineup: ['ARTIST NAME', 'ARTIST NAME', 'ARTIST NAME'],
       countdownDate: '2026-06-14T23:00:00',
+      tickets: [
+        { name: 'EARLY ENTRY', sub: 'BIS 00:30',  price: 19 },
+        { name: 'REGULAR',     sub: 'ALL NIGHT',  price: 29 },
+        { name: 'BACKSTAGE',   sub: 'LIMITED',    price: 69 },
+      ],
       mainPhoto: 'https://picsum.photos/seed/rave01main/1200/800',
       gallery: [
         'https://picsum.photos/seed/rave01g1/900/600',
@@ -30,6 +35,11 @@
       time:   '00:00 — OPEN END',
       lineup: ['ARTIST NAME', 'ARTIST NAME', 'ARTIST NAME', 'ARTIST NAME'],
       countdownDate: '2026-06-28T00:00:00',
+      tickets: [
+        { name: 'EARLY ENTRY', sub: 'BIS 01:00',  price: 19 },
+        { name: 'REGULAR',     sub: 'ALL NIGHT',  price: 29 },
+        { name: 'BACKSTAGE',   sub: 'LIMITED',    price: 69 },
+      ],
       mainPhoto: 'https://picsum.photos/seed/rave02main/1200/800',
       gallery: [
         'https://picsum.photos/seed/rave02g1/900/600',
@@ -350,9 +360,228 @@
   document.querySelectorAll('.event-screen').forEach(screen => {
     screen.addEventListener('click', (e) => {
       if (e.target.classList.contains('event-ticket-btn')) return;
+      if (e.target.closest('.evt-ticket-strip') || e.target.closest('.evt-mob-lineup-hint')) return;
       const id = parseInt(screen.dataset.eventId, 10);
       if (!isNaN(id)) openEventDetail(id);
     });
   });
+
+  // ── MOBILE COUNTDOWN ──────────────────────────────────────────────────────
+  function buildMobileCountdown(el, dateStr) {
+    const target = new Date(dateStr).getTime();
+    function update() {
+      const diff = target - Date.now();
+      if (diff <= 0) { el.innerHTML = ''; return; }
+      const d = Math.floor(diff / 86400000);
+      const h = Math.floor((diff % 86400000) / 3600000);
+      const m = Math.floor((diff % 3600000)  / 60000);
+      const s = Math.floor((diff % 60000)    / 1000);
+      el.innerHTML = `
+        <div class="evt-mob-cd-unit">
+          <span class="evt-mob-cd-num">${String(d).padStart(2,'0')}</span>
+          <span class="evt-mob-cd-lbl">TAGE</span>
+        </div>
+        <span class="evt-mob-cd-sep">:</span>
+        <div class="evt-mob-cd-unit">
+          <span class="evt-mob-cd-num">${String(h).padStart(2,'0')}</span>
+          <span class="evt-mob-cd-lbl">STD</span>
+        </div>
+        <span class="evt-mob-cd-sep">:</span>
+        <div class="evt-mob-cd-unit">
+          <span class="evt-mob-cd-num">${String(m).padStart(2,'0')}</span>
+          <span class="evt-mob-cd-lbl">MIN</span>
+        </div>
+        <span class="evt-mob-cd-sep">:</span>
+        <div class="evt-mob-cd-unit">
+          <span class="evt-mob-cd-num">${String(s).padStart(2,'0')}</span>
+          <span class="evt-mob-cd-lbl">SEK</span>
+        </div>
+      `;
+    }
+    update();
+    setInterval(update, 1000);
+  }
+
+  // ── BOTTOM SHEET ──────────────────────────────────────────────────────────
+  const bottomSheet = document.getElementById('evt-bottom-sheet');
+  const bsBackdrop  = bottomSheet.querySelector('.evt-bs-backdrop');
+  const bsPanel     = bottomSheet.querySelector('.evt-bs-panel');
+  const bsNameEl    = document.getElementById('evt-bs-name');
+  const bsVenueEl   = document.getElementById('evt-bs-venue');
+  const bsDateEl    = document.getElementById('evt-bs-date');
+  const bsTimeEl    = document.getElementById('evt-bs-time');
+  const bsTicketsEl = document.getElementById('evt-bs-tickets');
+  const bsLineupEl  = document.getElementById('evt-bs-lineup');
+  const bsCtaEl     = document.getElementById('evt-bs-cta');
+  const bsTabs      = bottomSheet.querySelectorAll('.evt-bs-tab');
+  let   bsActiveTab = 'tickets';
+
+  bsTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      bsActiveTab = tab.dataset.tab;
+      bsTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === bsActiveTab));
+      bsTicketsEl.style.display = bsActiveTab === 'tickets' ? 'block' : 'none';
+      bsLineupEl.style.display  = bsActiveTab === 'lineup'  ? 'block' : 'none';
+    });
+  });
+
+  bsBackdrop.addEventListener('click', closeBottomSheet);
+
+  function openBottomSheet(eventIdx, tab) {
+    const ev = EVENT_DATA[eventIdx];
+    if (!ev) return;
+
+    bsNameEl.textContent  = ev.name;
+    bsVenueEl.textContent = ev.venue;
+    bsDateEl.textContent  = ev.date;
+    bsTimeEl.textContent  = ev.time;
+
+    if (ev.tickets && ev.tickets.length) {
+      bsTicketsEl.innerHTML = ev.tickets.map(t => `
+        <div class="evt-ticket-tier">
+          <div class="evt-tier-info">
+            <span class="evt-tier-name">${t.name}</span>
+            <span class="evt-tier-sub">${t.sub}</span>
+          </div>
+          <div class="evt-tier-price">
+            <span class="evt-tier-currency">€</span>${t.price}
+          </div>
+        </div>
+      `).join('');
+      bsCtaEl.className   = 'evt-bs-cta';
+      bsCtaEl.textContent = 'ZUR KASSE';
+    } else {
+      bsTicketsEl.innerHTML = `
+        <div class="evt-bs-no-tickets">
+          <span>TICKETS IN KÜRZE</span>
+        </div>`;
+      bsCtaEl.className   = 'evt-bs-cta soon-cta';
+      bsCtaEl.textContent = 'DEMNÄCHST VERFÜGBAR';
+    }
+
+    bsLineupEl.innerHTML = `
+      <div class="evt-bs-lineup-list">
+        ${ev.lineup.map((a, i) => `
+          <div class="evt-bs-lineup-item">
+            <span class="evt-bs-lineup-num">0${i + 1}</span>
+            <span class="evt-bs-lineup-name">${a}</span>
+            <span class="evt-bs-lineup-accent"></span>
+          </div>
+        `).join('')}
+      </div>`;
+
+    bsActiveTab = tab || 'tickets';
+    bsTabs.forEach(t => t.classList.toggle('active', t.dataset.tab === bsActiveTab));
+    bsTicketsEl.style.display = bsActiveTab === 'tickets' ? 'block' : 'none';
+    bsLineupEl.style.display  = bsActiveTab === 'lineup'  ? 'block' : 'none';
+
+    bottomSheet.classList.add('open');
+    bsPanel.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+
+    const onKey = (e) => { if (e.key === 'Escape') closeBottomSheet(); };
+    document.addEventListener('keydown', onKey, { once: true });
+  }
+
+  function closeBottomSheet() {
+    bottomSheet.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // ── INJECT MOBILE SLIDES ──────────────────────────────────────────────────
+  function injectMobileSlides() {
+    document.querySelectorAll('.event-screen').forEach(screen => {
+      const idx    = parseInt(screen.dataset.eventId, 10);
+      if (isNaN(idx)) return;
+      const ev     = EVENT_DATA[idx];
+      if (!ev) return;
+
+      const parts    = ev.date.split('.');
+      const dayMonth = parts[0] + '.' + parts[1];
+      const year     = parts[2];
+      const isSoon   = !ev.isPast && !!screen.querySelector('.event-ticket-btn.soon');
+      const isPast   = ev.isPast || screen.classList.contains('event-screen--past');
+
+      // Top bar
+      const topBar = `
+        <div class="evt-mob-topbar">
+          <img src="logo-mark.svg" class="evt-mob-logo-img" alt="INDICATE">
+          <span class="evt-mob-evtnum">${ev.num}</span>
+        </div>`;
+
+      // Middle section
+      let statusHtml = '';
+      if (isPast) {
+        statusHtml = `<span class="evt-mob-past-badge">ABGESCHLOSSEN</span>`;
+      } else {
+        statusHtml = `<div class="evt-mob-countdown" data-mob-cd="${ev.countdownDate}"></div>`;
+      }
+      const lineupHint = !isPast
+        ? `<button class="evt-mob-lineup-hint" data-lineup-idx="${idx}">
+             <span class="lh-dot"></span>LINEUP ANSEHEN
+           </button>`
+        : '';
+
+      const body = `
+        <div class="evt-mob-body">
+          <div class="evt-mob-date">${dayMonth}</div>
+          <span class="evt-mob-year">${year}</span>
+          <div class="evt-mob-divider"></div>
+          <div class="evt-mob-name">${ev.name}</div>
+          <div class="evt-mob-venue">${ev.venue}</div>
+          <div class="evt-mob-time">${ev.time}</div>
+          ${statusHtml}
+          ${lineupHint}
+        </div>`;
+
+      // Ticket strip
+      let stripClass = 'evt-ticket-strip';
+      let stripInner = '';
+      if (isPast) {
+        stripClass += ' evt-ticket-strip--past';
+        stripInner  = `<span class="evt-ticket-strip-text">IMPRESSIONEN</span><span class="evt-ticket-strip-arrow">→</span>`;
+      } else if (isSoon) {
+        stripClass += ' evt-ticket-strip--soon';
+        stripInner  = `<span class="evt-ticket-strip-text">DEMNÄCHST</span>`;
+      } else {
+        stripInner  = `<span class="evt-ticket-strip-text">TICKETS ZIEHEN</span><span class="evt-ticket-strip-arrow">↑</span>`;
+      }
+      const strip = `<div class="${stripClass}" data-strip-idx="${idx}">${stripInner}</div>`;
+
+      const slide = document.createElement('div');
+      slide.className = 'evt-mobile-slide';
+      slide.innerHTML = topBar + body + strip;
+      screen.appendChild(slide);
+    });
+
+    // Build mobile countdowns
+    document.querySelectorAll('[data-mob-cd]').forEach(el => {
+      buildMobileCountdown(el, el.dataset.mobCd);
+    });
+
+    // Lineup hint clicks
+    document.querySelectorAll('.evt-mob-lineup-hint').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        openBottomSheet(parseInt(btn.dataset.lineupIdx, 10), 'lineup');
+      });
+    });
+
+    // Ticket strip clicks
+    document.querySelectorAll('.evt-ticket-strip').forEach(strip => {
+      const idx = parseInt(strip.dataset.stripIdx, 10);
+      strip.addEventListener('click', e => {
+        e.stopPropagation();
+        if (strip.classList.contains('evt-ticket-strip--soon')) return;
+        if (strip.classList.contains('evt-ticket-strip--past')) {
+          if (!isNaN(idx)) openEventDetail(idx);
+          return;
+        }
+        if (!isNaN(idx)) openBottomSheet(idx, 'tickets');
+      });
+    });
+  }
+
+  injectMobileSlides();
 
 })();
