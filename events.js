@@ -502,7 +502,7 @@
         <div class="evt-bs-price-grid">
           ${PWYW_PRICES.map(p => `
             <button class="evt-bs-price-btn" data-price="${p}">
-              <span class="evt-bs-price-num">${p}<span class="evt-bs-price-eur">€</span></span>
+              <span class="evt-bs-price-num">${p}<span class="evt-bs-price-cur">€</span></span>
             </button>
           `).join('')}
         </div>
