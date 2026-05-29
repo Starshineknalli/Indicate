@@ -5,12 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>INDICATE — Techno Kollektiv</title>
 
-  <script type="importmap">{
-    "imports": {
-      "three":           "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/":   "https://unpkg.com/three@0.160.0/examples/jsm/"
-    }
-  }</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script>if(!sessionStorage.getItem('indicate_auth')){document.documentElement.classList.add('pw-lock')}</script>
 
@@ -25,10 +19,34 @@
       overscroll-behavior-y: none;
     }
 
-    /* ── 3D CANVAS — fixed, always behind ── */
-    #scene-canvas {
-      position: fixed; inset: 0;
-      width: 100%; height: 100%; display: block;
+    /* ── STATIC BACKGROUND ── */
+    #hero-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.65) 0%, transparent 30%),
+        linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 45%),
+        linear-gradient(to right, rgba(0,0,0,0.4) 0%, transparent 22%, transparent 78%, rgba(0,0,0,0.4) 100%),
+        radial-gradient(ellipse at 50% 108%, rgba(180,0,0,0.22) 0%, rgba(120,0,0,0.08) 38%, transparent 65%),
+        radial-gradient(ellipse at 25% 85%, rgba(140,0,0,0.07) 0%, transparent 45%),
+        radial-gradient(ellipse at 75% 85%, rgba(140,0,0,0.07) 0%, transparent 45%),
+        #000;
+    }
+
+    /* DJ silhouette */
+    #hero-dj {
+      position: fixed; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: min(1400px, 110vw); height: auto;
+      z-index: 1; pointer-events: none;
+      color: rgba(255,255,255,0.042);
+    }
+
+    /* Subtle stage floor glow */
+    #hero-floor-glow {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 55vw; height: 22vh;
+      background: radial-gradient(ellipse at 50% 100%, rgba(200,0,0,0.13) 0%, transparent 72%);
+      pointer-events: none; z-index: 1;
     }
 
     /* ── ATMOSPHERE ── */
@@ -357,6 +375,75 @@
 
   <div class="page-transition in"><span class="page-transition-label">INDICATE</span></div>
 
+  <!-- BACKGROUND -->
+  <div id="hero-bg"></div>
+  <div id="hero-floor-glow"></div>
+
+  <!-- DJ SILHOUETTE -->
+  <svg id="hero-dj" viewBox="0 0 1400 300" preserveAspectRatio="xMidYMax meet"
+       fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Speaker L -->
+    <rect x="48" y="20" width="88" height="270" rx="5" stroke-width="1"/>
+    <circle cx="92" cy="105" r="30" stroke-width="1"/>
+    <circle cx="92" cy="195" r="30" stroke-width="1"/>
+    <rect x="62" y="255" width="60" height="8" rx="2" stroke-width="0.8" stroke-opacity="0.6"/>
+    <!-- Speaker R -->
+    <rect x="1264" y="20" width="88" height="270" rx="5" stroke-width="1"/>
+    <circle cx="1308" cy="105" r="30" stroke-width="1"/>
+    <circle cx="1308" cy="195" r="30" stroke-width="1"/>
+    <rect x="1278" y="255" width="60" height="8" rx="2" stroke-width="0.8" stroke-opacity="0.6"/>
+    <!-- Table surface -->
+    <rect x="185" y="188" width="1030" height="8" rx="2" stroke-width="1.2"/>
+    <!-- Table legs -->
+    <line x1="280" y1="196" x2="280" y2="290" stroke-width="0.9" stroke-opacity="0.6"/>
+    <line x1="1120" y1="196" x2="1120" y2="290" stroke-width="0.9" stroke-opacity="0.6"/>
+    <!-- Left CDJ -->
+    <circle cx="430" cy="148" r="112" stroke-width="1"/>
+    <circle cx="430" cy="148" r="92"  stroke-width="0.7" stroke-opacity="0.55"/>
+    <circle cx="430" cy="148" r="60"  stroke-width="0.5" stroke-opacity="0.4"/>
+    <circle cx="430" cy="148" r="18"  stroke-width="1"/>
+    <!-- Tonearm L -->
+    <line x1="512" y1="55" x2="448" y2="143" stroke-width="1.2"/>
+    <circle cx="512" cy="55" r="7" stroke-width="1"/>
+    <!-- Right CDJ -->
+    <circle cx="970" cy="148" r="112" stroke-width="1"/>
+    <circle cx="970" cy="148" r="92"  stroke-width="0.7" stroke-opacity="0.55"/>
+    <circle cx="970" cy="148" r="60"  stroke-width="0.5" stroke-opacity="0.4"/>
+    <circle cx="970" cy="148" r="18"  stroke-width="1"/>
+    <!-- Tonearm R -->
+    <line x1="888" y1="55" x2="952" y2="143" stroke-width="1.2"/>
+    <circle cx="888" cy="55" r="7" stroke-width="1"/>
+    <!-- CDJ screens -->
+    <rect x="320" y="65" width="72" height="42" rx="2" stroke-width="0.8" stroke-opacity="0.5"/>
+    <rect x="1008" y="65" width="72" height="42" rx="2" stroke-width="0.8" stroke-opacity="0.5"/>
+    <!-- Mixer body -->
+    <rect x="590" y="80" width="220" height="116" rx="4" stroke-width="1.1"/>
+    <!-- Mixer faders -->
+    <line x1="630" y1="96" x2="630" y2="176" stroke-width="0.8" stroke-opacity="0.55"/>
+    <line x1="660" y1="96" x2="660" y2="176" stroke-width="0.8" stroke-opacity="0.55"/>
+    <line x1="740" y1="96" x2="740" y2="176" stroke-width="0.8" stroke-opacity="0.55"/>
+    <line x1="770" y1="96" x2="770" y2="176" stroke-width="0.8" stroke-opacity="0.55"/>
+    <!-- Fader caps -->
+    <rect x="621" y="122" width="18" height="10" rx="1.5" stroke-width="0.8" stroke-opacity="0.7"/>
+    <rect x="651" y="138" width="18" height="10" rx="1.5" stroke-width="0.8" stroke-opacity="0.7"/>
+    <rect x="731" y="115" width="18" height="10" rx="1.5" stroke-width="0.8" stroke-opacity="0.7"/>
+    <rect x="761" y="130" width="18" height="10" rx="1.5" stroke-width="0.8" stroke-opacity="0.7"/>
+    <!-- Knobs -->
+    <circle cx="674" cy="113" r="8" stroke-width="0.8" stroke-opacity="0.6"/>
+    <circle cx="700" cy="113" r="8" stroke-width="0.8" stroke-opacity="0.6"/>
+    <circle cx="726" cy="113" r="8" stroke-width="0.8" stroke-opacity="0.6"/>
+    <!-- Crossfader -->
+    <line x1="605" y1="195" x2="795" y2="195" stroke-width="0.9" stroke-opacity="0.5"/>
+    <rect x="678" y="188" width="44" height="14" rx="2.5" stroke-width="0.9" stroke-opacity="0.65"/>
+    <!-- VU meters -->
+    <rect x="636" y="85" width="8" height="24" rx="1" stroke-width="0.7" stroke-opacity="0.45"/>
+    <rect x="756" y="85" width="8" height="24" rx="1" stroke-width="0.7" stroke-opacity="0.45"/>
+    <!-- Laptop stand -->
+    <rect x="612" y="30" width="176" height="52" rx="3" stroke-width="0.8" stroke-opacity="0.35"/>
+    <line x1="612" y1="80" x2="590" y2="80" stroke-width="0.7" stroke-opacity="0.3"/>
+    <line x1="788" y1="80" x2="810" y2="80" stroke-width="0.7" stroke-opacity="0.3"/>
+  </svg>
+
   <!-- ATMOSPHERE -->
   <div class="scanlines"></div>
   <canvas id="grain-canvas"></canvas>
@@ -364,9 +451,6 @@
   <div class="corner corner-tr"></div>
   <div class="corner corner-bl"></div>
   <div class="corner corner-br"></div>
-
-  <!-- 3D SCENE -->
-  <canvas id="scene-canvas"></canvas>
 
   <!-- NAV -->
   <nav class="nav">
@@ -604,7 +688,28 @@
 
   <script src="shared.js"></script>
   <script src="password.js"></script>
-  <script type="module" src="index.js"></script>
+  <script>
+    // Film grain
+    (function () {
+      const el = document.getElementById('grain-canvas');
+      if (!el) return;
+      const ctx = el.getContext('2d');
+      el.width = 320; el.height = 220;
+      let last = 0;
+      (function frame(t) {
+        requestAnimationFrame(frame);
+        if (t - last < 50) return;
+        last = t;
+        const img = ctx.createImageData(320, 220);
+        for (let i = 0; i < img.data.length; i += 4) {
+          const v = Math.random() * 255 | 0;
+          img.data[i] = img.data[i+1] = img.data[i+2] = v;
+          img.data[i+3] = 255;
+        }
+        ctx.putImageData(img, 0, 0);
+      })(0);
+    })();
+  </script>
   <script>
     (function () {
       // ── GSAP intro ──
