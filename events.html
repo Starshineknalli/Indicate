@@ -424,10 +424,26 @@
     }
 
     /* ── Ticket slide — alle Viewports ── */
+    /* ── Legal footer screen ── */
+    .evt-legal-footer {
+      height: 100svh; scroll-snap-align: start;
+      display: flex; align-items: center; justify-content: center;
+      gap: 2rem; background: #000;
+    }
+    .evt-legal-footer a {
+      font-family: var(--font-body); font-size: 0.44rem;
+      letter-spacing: 0.4em; color: rgba(255,255,255,0.18);
+      transition: color 0.2s;
+    }
+    .evt-legal-footer a:hover { color: rgba(255,255,255,0.55); }
+    .evt-legal-sep {
+      width: 1px; height: 8px; background: rgba(255,255,255,0.1);
+    }
+
     .evt-mobile-slide {
       position: absolute; inset: 0; z-index: 10;
       display: flex; flex-direction: column;
-      padding-bottom: 36px;
+      /* No padding-bottom needed — legal bar is no longer fixed */
     }
 
     /* ── Background countdown watermark ── */
@@ -707,6 +723,66 @@
       font-size: 0.85rem; vertical-align: top;
       margin-top: 0.35rem; display: inline-block; color: var(--grey);
     }
+    /* ── Photos strip ── */
+    .evt-bs-photos {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+      overflow: hidden;
+    }
+    .evt-bs-photos:empty { display: none; }
+    .evt-bs-photo {
+      width: 100%; aspect-ratio: 4/3; object-fit: cover;
+      filter: grayscale(80%) brightness(0.55) contrast(1.15);
+      display: block; transition: filter 0.35s;
+    }
+    .evt-bs-photo:hover { filter: grayscale(50%) brightness(0.75); }
+
+    /* ── PWYW tickets ── */
+    .evt-bs-pwyw-intro {
+      padding: 1.4rem 1.4rem 0.6rem;
+    }
+    .evt-bs-pwyw-title {
+      font-family: var(--font-body); font-size: 0.48rem;
+      letter-spacing: 0.48em; color: var(--red);
+      display: block; margin-bottom: 0.6rem;
+    }
+    .evt-bs-pwyw-text {
+      font-family: var(--font-body); font-size: 0.5rem;
+      letter-spacing: 0.1em; line-height: 1.9;
+      color: rgba(255,255,255,0.38);
+    }
+    .evt-bs-price-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 6px; padding: 1rem 1.4rem 0;
+    }
+    .evt-bs-price-btn {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 0.9rem 0.3rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer; touch-action: manipulation;
+      transition: background 0.18s, border-color 0.18s;
+      gap: 0.15rem;
+    }
+    .evt-bs-price-btn:hover { background: rgba(255,255,255,0.07); }
+    .evt-bs-price-btn.active {
+      background: rgba(224,0,0,0.12);
+      border-color: var(--red);
+    }
+    .evt-bs-price-eur {
+      font-family: var(--font-body); font-size: 0.4rem;
+      color: var(--grey); letter-spacing: 0.05em;
+    }
+    .evt-bs-price-num {
+      font-family: var(--font-head); font-size: 1.8rem;
+      color: var(--white); line-height: 1; letter-spacing: 0.02em;
+    }
+    .evt-bs-price-btn.active .evt-bs-price-num { color: var(--red); }
+    .evt-bs-price-incl {
+      font-family: var(--font-body); font-size: 0.42rem;
+      letter-spacing: 0.25em; color: rgba(255,255,255,0.28);
+      text-align: center; padding: 0.7rem 1.4rem 1rem;
+    }
+
     .evt-bs-no-tickets { padding: 2.5rem 1.4rem; text-align: center; }
     .evt-bs-no-tickets span {
       font-size: 0.52rem; letter-spacing: 0.42em; color: rgba(255,255,255,0.26);
@@ -1057,6 +1133,13 @@
       </div>
     </div>
 
+    <!-- LEGAL FOOTER -->
+    <div class="evt-legal-footer">
+      <a href="impressum.html" data-transition>IMPRESSUM</a>
+      <span class="evt-legal-sep"></span>
+      <a href="datenschutz.html" data-transition>DATENSCHUTZ</a>
+    </div>
+
   </div><!-- /events-scroll -->
 
   <!-- EVENT DETAIL PANEL -->
@@ -1092,12 +1175,6 @@
     </div>
   </div>
 
-  <div class="legal-bar">
-    <a href="impressum.html">IMPRESSUM</a>
-    <div class="legal-bar-sep"></div>
-    <a href="datenschutz.html">DATENSCHUTZ</a>
-  </div>
-
   <!-- MOBILE BOTTOM SHEET -->
   <div class="evt-bottom-sheet" id="evt-bottom-sheet">
     <div class="evt-bs-backdrop"></div>
@@ -1112,6 +1189,7 @@
         </div>
         <div class="evt-mob-countdown" id="evt-bs-countdown"></div>
       </div>
+      <div class="evt-bs-photos" id="evt-bs-photos"></div>
       <div class="evt-bs-tabs">
         <button class="evt-bs-tab active" data-tab="tickets">TICKETS</button>
         <button class="evt-bs-tab" data-tab="lineup">LINEUP</button>

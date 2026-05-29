@@ -355,30 +355,24 @@ html.pw-lock body { visibility: hidden; }
 
 /* ── LEGAL FOOTER BAR ── */
 .legal-bar {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  z-index: 150;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  padding: 0.55rem 2.8rem;
-  background: rgba(0,0,0,0.88);
-  backdrop-filter: blur(8px);
-  border-top: 1px solid rgba(255,255,255,0.04);
+  padding: 1.8rem 2.8rem;
 }
 .legal-bar a {
   font-family: var(--font-body);
-  font-size: 0.48rem;
+  font-size: 0.44rem;
   letter-spacing: 0.4em;
-  color: rgba(255,255,255,0.22);
+  color: rgba(255,255,255,0.18);
   transition: color 0.2s;
 }
-.legal-bar a:hover { color: rgba(255,255,255,0.65); }
+.legal-bar a:hover { color: rgba(255,255,255,0.55); }
 .legal-bar-sep {
   width: 1px;
-  height: 10px;
-  background: rgba(255,255,255,0.1);
+  height: 8px;
+  background: rgba(255,255,255,0.08);
 }
 
 /* ── LEGAL PAGE CONTENT ── */

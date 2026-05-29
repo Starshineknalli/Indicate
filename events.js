@@ -428,6 +428,8 @@
 
   bsBackdrop.addEventListener('click', closeBottomSheet);
 
+  const PWYW_PRICES = [11, 13, 15, 18];
+
   function openBottomSheet(eventIdx, tab) {
     const ev = EVENT_DATA[eventIdx];
     if (!ev) return;
@@ -448,20 +450,42 @@
       }
     }
 
+    // Photos — first 3 from gallery
+    const photosEl = document.getElementById('evt-bs-photos');
+    if (photosEl) {
+      const photos = (ev.gallery || []).slice(0, 3);
+      photosEl.innerHTML = photos.map(src =>
+        `<img src="${src}" class="evt-bs-photo" alt="" loading="lazy">`
+      ).join('');
+    }
+
     if (ev.tickets && ev.tickets.length) {
-      bsTicketsEl.innerHTML = ev.tickets.map(t => `
-        <div class="evt-ticket-tier">
-          <div class="evt-tier-info">
-            <span class="evt-tier-name">${t.name}</span>
-            <span class="evt-tier-sub">${t.sub}</span>
-          </div>
-          <div class="evt-tier-price">
-            <span class="evt-tier-currency">€</span>${t.price}
-          </div>
+      // PWYW ticket selector
+      bsTicketsEl.innerHTML = `
+        <div class="evt-bs-pwyw-intro">
+          <span class="evt-bs-pwyw-title">PAY WHAT YOU WANT</span>
+          <p class="evt-bs-pwyw-text">Zahle was du für richtig empfindest. Die günstigeren Tickets sind für alle, die sich gerade nicht mehr leisten können — wer mehr zahlt, ermöglicht das.</p>
         </div>
-      `).join('');
-      bsCtaEl.className   = 'evt-bs-cta';
-      bsCtaEl.textContent = 'ZUR KASSE';
+        <div class="evt-bs-price-grid">
+          ${PWYW_PRICES.map(p => `
+            <button class="evt-bs-price-btn" data-price="${p}">
+              <span class="evt-bs-price-eur">€</span>
+              <span class="evt-bs-price-num">${p}</span>
+            </button>
+          `).join('')}
+        </div>
+        <div class="evt-bs-price-incl">inkl. Bier oder Powerade</div>
+      `;
+      bsTicketsEl.querySelectorAll('.evt-bs-price-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          bsTicketsEl.querySelectorAll('.evt-bs-price-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          bsCtaEl.textContent = `ZUR KASSE · €${btn.dataset.price}`;
+          bsCtaEl.className   = 'evt-bs-cta';
+        });
+      });
+      bsCtaEl.className   = 'evt-bs-cta soon-cta';
+      bsCtaEl.textContent = 'PREIS WÄHLEN';
     } else {
       bsTicketsEl.innerHTML = `
         <div class="evt-bs-no-tickets">
