@@ -658,6 +658,7 @@
       transform: translateY(100%);
       transition: transform 0.42s cubic-bezier(0.32,0.72,0,1);
       max-height: 86vh; overflow-y: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-gutter: stable;
     }
     .evt-bottom-sheet.open .evt-bs-panel { transform: translateY(0); }
     .evt-bs-panel::-webkit-scrollbar { display: none; }
@@ -778,7 +779,7 @@
 
     .evt-bs-tier {
       display: flex; align-items: center; gap: 0.8rem;
-      padding: 0.95rem 1.4rem;
+      padding: 1rem 1.6rem 1rem 1.4rem; /* extra right padding vs scrollbar */
       border-bottom: 1px solid rgba(255,255,255,0.05);
       cursor: pointer; touch-action: manipulation;
       position: relative; transition: background 0.15s;
@@ -823,25 +824,24 @@
     /* BASIS — neutral */
     .evt-bs-tier--basis { opacity: 0.78; }
 
-    /* FAIR — recommended, most prominent */
-    .evt-bs-tier-badge {
-      position: absolute; top: 0; left: 0; right: 0;
-      font-family: var(--font-body); font-size: 0.36rem;
-      letter-spacing: 0.42em; color: var(--red); text-align: center;
-      padding: 0.2rem 0;
-      background: rgba(224,0,0,0.1);
-      border-bottom: 1px solid rgba(224,0,0,0.2);
+    /* FAIR — recommended, subtle distinction */
+    .evt-bs-tier-badge { display: none; } /* unused, replaced by inline tag */
+    .evt-bs-tier-recommend-tag {
+      font-family: var(--font-body); font-size: 0.3rem;
+      letter-spacing: 0.35em; color: rgba(224,0,0,0.75);
+      border: 1px solid rgba(224,0,0,0.28);
+      padding: 0.15rem 0.42rem; white-space: nowrap;
+      vertical-align: middle; margin-left: 0.5rem;
     }
     .evt-bs-tier--recommended {
-      padding-top: 1.6rem;
-      border-left: 1px solid rgba(224,0,0,0.25);
-      border-right: 1px solid rgba(224,0,0,0.25);
-      border-bottom: 1px solid rgba(224,0,0,0.25);
+      border-left: 1px solid rgba(224,0,0,0.18);
+      border-right: 1px solid rgba(224,0,0,0.18);
+      border-bottom: 1px solid rgba(224,0,0,0.18);
     }
     .evt-bs-tier--recommended .evt-bs-tier-label { font-size: 1.5rem; }
     .evt-bs-tier--recommended.active {
-      background: rgba(224,0,0,0.11) !important;
-      border-color: var(--red) !important;
+      background: rgba(224,0,0,0.1) !important;
+      border-color: rgba(224,0,0,0.55) !important;
     }
 
     /* SUPPORTER — premium, largest, warm feel */
