@@ -180,8 +180,14 @@
     if (pastTag) pastTag.style.display = ev.isPast ? 'inline-block' : 'none';
 
     // Hero
+    const nameParts = ev.name.split(' ');
+    const solid   = nameParts.slice(0, -1).join(' ') || ev.name;
+    const outline = nameParts.length > 1 ? nameParts[nameParts.length - 1] : '';
     document.getElementById('edp-hero-ghost').textContent = ev.name.replace(' ', '\n');
-    document.getElementById('edp-hero-title').textContent = ev.name;
+    document.getElementById('edp-hero-title').innerHTML   = `
+      <span class="edp-hero-title-solid">${solid}</span>
+      ${outline ? `<span class="edp-hero-title-outline">${outline}</span>` : ''}
+    `;
     document.getElementById('edp-main-img').src           = ev.mainPhoto;
     document.getElementById('edp-hero-meta').innerHTML    = `
       <span class="edp-hero-meta-item">${ev.date}</span>
@@ -191,10 +197,9 @@
       <span class="edp-hero-meta-item">${ev.time}</span>
     `;
 
-    // Lineup rows
+    // Lineup rows — alternierende Ausrichtung, keine Zahlen
     document.getElementById('edp-lineup').innerHTML = ev.lineup.map((a, i) => `
-      <div class="edp-lineup-row">
-        <span class="edp-lineup-index">${String(i + 1).padStart(2, '0')}</span>
+      <div class="edp-lineup-row ${i % 2 === 0 ? 'edp-lineup-row--left' : 'edp-lineup-row--right'}">
         <span class="edp-lineup-name">${a}</span>
         <span class="edp-lineup-sweep"></span>
       </div>
@@ -234,6 +239,35 @@
   }
 
   btnClose.addEventListener('click', closeEventDetail);
+
+  // Swipe-to-close für Detail-Panel (wie Bottom Sheet)
+  let edpTouchStartY = 0;
+  let edpDragging    = false;
+
+  panel.addEventListener('touchstart', e => {
+    if (panel.scrollTop > 0) return;
+    edpTouchStartY = e.touches[0].clientY;
+    edpDragging = false;
+  }, { passive: true });
+
+  panel.addEventListener('touchmove', e => {
+    if (panel.scrollTop > 0) return;
+    const dy = e.touches[0].clientY - edpTouchStartY;
+    if (dy > 8) {
+      edpDragging = true;
+      panel.style.transition = 'none';
+      panel.style.transform  = `translateY(${Math.max(0, dy)}px)`;
+    }
+  }, { passive: true });
+
+  panel.addEventListener('touchend', e => {
+    if (!edpDragging) return;
+    const dy = e.changedTouches[0].clientY - edpTouchStartY;
+    panel.style.transition = '';
+    panel.style.transform  = '';
+    if (dy > 90) closeEventDetail();
+    edpDragging = false;
+  }, { passive: true });
 
   // Click on event screen → bottom sheet (upcoming) or detail panel (past)
   document.querySelectorAll('.event-screen').forEach(screen => {
@@ -347,9 +381,9 @@
 
   function updateBsCta() {
     if (!bsSelectedPrice) return;
-    const total = bsSelectedPrice * bsSelectedQty;
-    const qtyPfx = bsSelectedQty > 1 ? `${bsSelectedQty}× ` : '';
-    bsCtaEl.textContent = `ZUR KASSE · ${qtyPfx}€${total}`;
+    const total  = bsSelectedPrice * bsSelectedQty;
+    const suffix = bsSelectedQty > 1 ? ` — ${bsSelectedQty} TICKETS` : '';
+    bsCtaEl.textContent = `ZUR KASSE · €${total}${suffix}`;
     bsCtaEl.className   = 'evt-bs-cta';
   }
 
