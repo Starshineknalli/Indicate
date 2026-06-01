@@ -353,14 +353,21 @@
   const PWYW_PRICES = [11, 13, 15, 18];
   let bsCurrentEventIdx = -1;
   let bsSelectedPrice   = null;
+  let bsSelectedQty     = 1;
+
+  function updateBsCta() {
+    if (!bsSelectedPrice) return;
+    const total = bsSelectedPrice * bsSelectedQty;
+    const qtyPfx = bsSelectedQty > 1 ? `${bsSelectedQty}× ` : '';
+    bsCtaEl.textContent = `ZUR KASSE · ${qtyPfx}€${total}`;
+    bsCtaEl.className   = 'evt-bs-cta';
+  }
 
   bsCtaEl.addEventListener('click', () => {
     if (bsCtaEl.classList.contains('soon-cta')) return;
     const ev = EVENT_DATA[bsCurrentEventIdx];
-    if (!ev) return;
-    const base = ev.ticketUrl || '';
-    if (!base) return;
-    const url = bsSelectedPrice ? `${base}?price=${bsSelectedPrice}` : base;
+    if (!ev || !ev.ticketUrl) return;
+    const url = `${ev.ticketUrl}?price=${bsSelectedPrice}&qty=${bsSelectedQty}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   });
 
@@ -370,6 +377,7 @@
 
     bsCurrentEventIdx = eventIdx;
     bsSelectedPrice   = null;
+    bsSelectedQty     = 1;
 
     bsNameEl.textContent  = ev.name;
     bsVenueEl.textContent = ev.venue;
@@ -396,8 +404,8 @@
       ).join('');
     }
 
-    if (ev.tickets && ev.tickets.length) {
-      // PWYW ticket selector
+    // Upcoming-Event → PWYW + Anzahl-Selektor
+    if (!ev.isPast) {
       bsTicketsEl.innerHTML = `
         <div class="evt-bs-pwyw-intro">
           <span class="evt-bs-pwyw-title">PAY WHAT YOU WANT</span>
@@ -410,26 +418,49 @@
             </button>
           `).join('')}
         </div>
+        <div class="evt-bs-qty-row">
+          <span class="evt-bs-qty-label">ANZAHL</span>
+          <div class="evt-bs-qty-ctrl">
+            <button class="evt-bs-qty-btn" id="bs-qty-minus">−</button>
+            <span class="evt-bs-qty-num" id="bs-qty-num">1</span>
+            <button class="evt-bs-qty-btn" id="bs-qty-plus">+</button>
+          </div>
+        </div>
         <div class="evt-bs-price-incl">inkl. Bier oder Powerade</div>
       `;
+
       bsTicketsEl.querySelectorAll('.evt-bs-price-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           bsTicketsEl.querySelectorAll('.evt-bs-price-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          bsSelectedPrice     = parseInt(btn.dataset.price, 10);
-          bsCtaEl.textContent = `ZUR KASSE · €${btn.dataset.price}`;
-          bsCtaEl.className   = 'evt-bs-cta';
+          bsSelectedPrice = parseInt(btn.dataset.price, 10);
+          updateBsCta();
         });
       });
+
+      const qtyNumEl  = document.getElementById('bs-qty-num');
+      const qtyMinus  = document.getElementById('bs-qty-minus');
+      const qtyPlus   = document.getElementById('bs-qty-plus');
+
+      function refreshQty() {
+        qtyNumEl.textContent = bsSelectedQty;
+        qtyMinus.disabled = bsSelectedQty <= 1;
+        qtyPlus.disabled  = bsSelectedQty >= 10;
+        updateBsCta();
+      }
+
+      qtyMinus.addEventListener('click', () => { if (bsSelectedQty > 1)  { bsSelectedQty--; refreshQty(); } });
+      qtyPlus.addEventListener('click',  () => { if (bsSelectedQty < 10) { bsSelectedQty++; refreshQty(); } });
+
       bsCtaEl.className   = 'evt-bs-cta soon-cta';
       bsCtaEl.textContent = 'PREIS WÄHLEN';
     } else {
       bsTicketsEl.innerHTML = `
         <div class="evt-bs-no-tickets">
-          <span>TICKETS IN KÜRZE</span>
+          <span>VERGANGENES EVENT</span>
         </div>`;
       bsCtaEl.className   = 'evt-bs-cta soon-cta';
-      bsCtaEl.textContent = 'DEMNÄCHST VERFÜGBAR';
+      bsCtaEl.textContent = 'ABGESCHLOSSEN';
     }
 
     bsLineupEl.innerHTML = `
