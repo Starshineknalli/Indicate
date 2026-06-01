@@ -13,6 +13,8 @@
       time:   '22:00 — 05:00',
       lineup: ['Gregor Gutmann', 'Landel B2B Chrissi Halt', 'Fabian.Knalli B2B Gyri', 'ARVOØ'],
       countdownDate: '2026-11-07T22:00:00',
+      tickets: [{}], // PWYW aktiviert — Preise unten in PWYW_PRICES
+      ticketUrl: '', // ← Ticket-Link hier eintragen (z.B. Eventbrite, eigene Seite)
       mainPhoto: 'https://picsum.photos/seed/cube3main/1200/800',
       gallery: [
         'https://picsum.photos/seed/cube3g1/900/600',
@@ -349,10 +351,25 @@
   }, { passive: true });
 
   const PWYW_PRICES = [11, 13, 15, 18];
+  let bsCurrentEventIdx = -1;
+  let bsSelectedPrice   = null;
+
+  bsCtaEl.addEventListener('click', () => {
+    if (bsCtaEl.classList.contains('soon-cta')) return;
+    const ev = EVENT_DATA[bsCurrentEventIdx];
+    if (!ev) return;
+    const base = ev.ticketUrl || '';
+    if (!base) return;
+    const url = bsSelectedPrice ? `${base}?price=${bsSelectedPrice}` : base;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  });
 
   function openBottomSheet(eventIdx, tab) {
     const ev = EVENT_DATA[eventIdx];
     if (!ev) return;
+
+    bsCurrentEventIdx = eventIdx;
+    bsSelectedPrice   = null;
 
     bsNameEl.textContent  = ev.name;
     bsVenueEl.textContent = ev.venue;
@@ -399,6 +416,7 @@
         btn.addEventListener('click', () => {
           bsTicketsEl.querySelectorAll('.evt-bs-price-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
+          bsSelectedPrice     = parseInt(btn.dataset.price, 10);
           bsCtaEl.textContent = `ZUR KASSE · €${btn.dataset.price}`;
           bsCtaEl.className   = 'evt-bs-cta';
         });
