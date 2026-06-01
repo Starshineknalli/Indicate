@@ -169,71 +169,61 @@
 
   const panel    = document.getElementById('event-detail-panel');
   const btnClose = document.getElementById('edp-close');
-  let   detailTimer = null;
 
   function openEventDetail(eventIdx) {
     const ev = EVENT_DATA[eventIdx];
     if (!ev) return;
 
-    // Past event badge
+    // Close bar
+    document.getElementById('edp-num').textContent = ev.num;
     const pastTag = document.getElementById('edp-past-tag');
     if (pastTag) pastTag.style.display = ev.isPast ? 'inline-block' : 'none';
 
-    // Populate header
-    document.getElementById('edp-num').textContent         = ev.num;
-    document.getElementById('edp-event-num').textContent   = ev.num;
-    document.getElementById('edp-event-title').textContent = ev.name;
-
-    // Meta rows
-    document.getElementById('edp-meta').innerHTML = `
-      <div class="edp-meta-row">
-        <span class="edp-meta-label">DATUM</span>
-        <span class="edp-meta-value">${ev.date}</span>
-      </div>
-      <div class="edp-meta-row">
-        <span class="edp-meta-label">ORT</span>
-        <span class="edp-meta-value">${ev.venue}</span>
-      </div>
-      <div class="edp-meta-row">
-        <span class="edp-meta-label">ZEIT</span>
-        <span class="edp-meta-value">${ev.time}</span>
-      </div>
+    // Hero
+    document.getElementById('edp-hero-ghost').textContent = ev.name.replace(' ', '\n');
+    document.getElementById('edp-hero-title').textContent = ev.name;
+    document.getElementById('edp-main-img').src           = ev.mainPhoto;
+    document.getElementById('edp-hero-meta').innerHTML    = `
+      <span class="edp-hero-meta-item">${ev.date}</span>
+      <span class="edp-hero-meta-sep"></span>
+      <span class="edp-hero-meta-item">${ev.venue}</span>
+      <span class="edp-hero-meta-sep"></span>
+      <span class="edp-hero-meta-item">${ev.time}</span>
     `;
 
-    // Lineup
-    document.getElementById('edp-lineup').innerHTML =
-      ev.lineup.map(a => `<span class="edp-lineup-artist">${a}</span>`).join('');
+    // Lineup rows
+    document.getElementById('edp-lineup').innerHTML = ev.lineup.map((a, i) => `
+      <div class="edp-lineup-row">
+        <span class="edp-lineup-index">${String(i + 1).padStart(2, '0')}</span>
+        <span class="edp-lineup-name">${a}</span>
+        <span class="edp-lineup-sweep"></span>
+      </div>
+    `).join('');
 
-    // Bottom section: countdown or past status
-    const bottomEl = document.getElementById('edp-bottom');
-    clearInterval(detailTimer);
-    if (ev.isPast) {
-      bottomEl.innerHTML = `
-        <div class="edp-past-status">
-          <span class="edp-past-status-label">ABGESCHLOSSEN</span>
-          <span class="edp-past-status-date">${ev.date}</span>
-        </div>
-      `;
-    } else {
-      bottomEl.innerHTML = '<div id="edp-countdown" class="event-countdown"></div>';
-      buildCountdown(document.getElementById('edp-countdown'), ev.countdownDate);
-    }
-
-    // Main photo
-    document.getElementById('edp-main-img').src = ev.mainPhoto;
-
-    // Gallery
-    const grid = document.getElementById('edp-gallery-grid');
-    grid.innerHTML = ev.gallery.map((src, i) =>
-      `<img src="${src}" alt="Foto ${i+1}" loading="lazy">`
+    // Photo mosaic
+    document.getElementById('edp-gallery-grid').innerHTML = ev.gallery.map((src, i) =>
+      `<div class="edp-mosaic-item"><img src="${src}" alt="Foto ${i + 1}" loading="lazy"></div>`
     ).join('');
+
+    // Recap footer
+    document.getElementById('edp-recap-badge').textContent = `EVENT ABGESCHLOSSEN — ${ev.date}`;
 
     // Open panel
     panel.classList.add('open');
     panel.scrollTop = 0;
     document.body.style.overflow = 'hidden';
 
-    // Close on ESC
+    // Laser sweep (trigger after paint)
+    const laser = document.getElementById('edp-hero-laser');
+    laser.classList.remove('sweep');
+    requestAnimationFrame(() => requestAnimationFrame(() => laser.classList.add('sweep')));
+
+    // Stagger lineup rows after panel slides in
+    const rows = panel.querySelectorAll('.edp-lineup-row');
+    rows.forEach(r => r.classList.remove('visible'));
+    rows.forEach((row, i) => setTimeout(() => row.classList.add('visible'), 420 + i * 160));
+
+    // ESC to close
     const onKey = (e) => { if (e.key === 'Escape') closeEventDetail(); };
     document.addEventListener('keydown', onKey, { once: true });
   }
