@@ -293,7 +293,7 @@
     .edp-hero-bg { position: absolute; inset: 0; z-index: 0; }
     .edp-hero-bg img {
       width: 100%; height: 100%; object-fit: cover; display: block;
-      filter: grayscale(100%) brightness(0.28) contrast(1.4);
+      filter: grayscale(80%) brightness(0.48) contrast(1.25);
     }
     .edp-hero-bg::after {
       content: ''; position: absolute; inset: 0;
@@ -428,11 +428,11 @@
     .edp-mosaic-item { overflow: hidden; position: relative; background: #060606; }
     .edp-mosaic-item img {
       width: 100%; height: 100%; object-fit: cover; display: block;
-      filter: grayscale(100%) brightness(0.45) contrast(1.35);
+      filter: grayscale(75%) brightness(0.65) contrast(1.15);
       transition: filter .65s, transform .65s;
     }
     .edp-mosaic-item:hover img {
-      filter: grayscale(30%) brightness(0.68) contrast(1.2);
+      filter: grayscale(20%) brightness(0.85) contrast(1.1);
       transform: scale(1.06);
     }
     .edp-mosaic-item:hover {
@@ -517,18 +517,18 @@
     .event-action-bar { display: none !important; }
     .event-bg-date    { display: none !important; }
 
-    /* Stärkere atmosphärische Hintergrundbehandlung */
+    /* Atmosphärische Hintergrundbehandlung */
     .event-bg-image img {
-      filter: grayscale(65%) brightness(0.22) contrast(1.35);
+      filter: grayscale(55%) brightness(0.42) contrast(1.2);
     }
     .event-screen:hover .event-bg-image img {
-      filter: grayscale(55%) brightness(0.3) contrast(1.28);
+      filter: grayscale(40%) brightness(0.55) contrast(1.15);
     }
     .event-screen--past .event-bg-image img {
-      filter: grayscale(100%) brightness(0.16) contrast(1.25);
+      filter: grayscale(85%) brightness(0.35) contrast(1.2);
     }
     .event-screen--past:hover .event-bg-image img {
-      filter: grayscale(95%) brightness(0.22) contrast(1.2);
+      filter: grayscale(70%) brightness(0.48) contrast(1.15);
     }
 
     /* Stärkere Vignetten oben und unten */
@@ -1098,7 +1098,7 @@
 
     <!-- THECUBE 1.0 -->
     <div class="event-screen event-screen--past" data-event-id="2">
-      <div class="event-bg-image"><img src="photos/cubetopia1-nr1.jpeg" alt="" loading="lazy"></div>
+      <div class="event-bg-image"><img src="photos/cubetopia1-nr2.jpeg" alt="" loading="lazy"></div>
       <div class="event-bg-date">27</div>
       <div class="laser-line" style="top:44%"></div>
       <div class="laser-line" style="top:73%"></div>

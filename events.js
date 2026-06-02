@@ -48,9 +48,9 @@
       venue:  'MÜNCHEN',
       time:   '22:00 — OPEN END',
       lineup: ['ARTIST NAME', 'ARTIST NAME'],
-      mainPhoto: 'photos/cubetopia1-nr1.jpeg',
+      mainPhoto: 'photos/cubetopia1-nr2.jpeg',
       gallery: [
-        'photos/cubetopia1-nr2.jpeg',
+        'photos/cubetopia1-nr1.jpeg',
         'photos/cubetopia1-nr3.jpeg',
         'photos/cubetopia1-nr4.jpeg',
         'photos/cubetopia1-nr5.jpeg',
