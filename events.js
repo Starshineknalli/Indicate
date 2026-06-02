@@ -15,12 +15,12 @@
       countdownDate: '2026-11-07T22:00:00',
       tickets: [{}],
       ticketUrl: '', // ← Ticket-Link hier eintragen
-      mainPhoto: 'photos/cubetopia3-nr1.jpg',
+      mainPhoto: 'photos/cubetopia3-nr1.jpeg',
       gallery: [
-        'photos/cubetopia3-nr2.jpg',
-        'photos/cubetopia3-nr3.jpg',
-        'photos/cubetopia3-nr4.jpg',
-        'photos/cubetopia3-nr5.jpg',
+        'photos/cubetopia3-nr2.jpeg',
+        'photos/cubetopia3-nr3.jpeg',
+        'photos/cubetopia3-nr4.jpeg',
+        'photos/cubetopia3-nr5.jpeg',
       ],
     },
     // ── PAST ──
@@ -32,12 +32,12 @@
       venue:  'MÜNCHEN',
       time:   '22:00 — OPEN END',
       lineup: ['ARTIST NAME', 'ARTIST NAME', 'ARTIST NAME'],
-      mainPhoto: 'photos/cubetopia2-nr1.jpg',
+      mainPhoto: 'photos/cubetopia2-nr1.jpeg',
       gallery: [
-        'photos/cubetopia2-nr2.jpg',
-        'photos/cubetopia2-nr3.jpg',
-        'photos/cubetopia2-nr4.jpg',
-        'photos/cubetopia2-nr5.jpg',
+        'photos/cubetopia2-nr2.jpeg',
+        'photos/cubetopia2-nr3.jpeg',
+        'photos/cubetopia2-nr4.jpeg',
+        'photos/cubetopia2-nr5.jpeg',
       ],
     },
     {
@@ -48,12 +48,12 @@
       venue:  'MÜNCHEN',
       time:   '22:00 — OPEN END',
       lineup: ['ARTIST NAME', 'ARTIST NAME'],
-      mainPhoto: 'photos/cubetopia1-nr1.jpg',
+      mainPhoto: 'photos/cubetopia1-nr1.jpeg',
       gallery: [
-        'photos/cubetopia1-nr2.jpg',
-        'photos/cubetopia1-nr3.jpg',
-        'photos/cubetopia1-nr4.jpg',
-        'photos/cubetopia1-nr5.jpg',
+        'photos/cubetopia1-nr2.jpeg',
+        'photos/cubetopia1-nr3.jpeg',
+        'photos/cubetopia1-nr4.jpeg',
+        'photos/cubetopia1-nr5.jpeg',
       ],
     },
   ];
