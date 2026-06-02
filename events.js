@@ -13,15 +13,14 @@
       time:   '22:00 — 05:00',
       lineup: ['Gregor Gutmann', 'Landel B2B Chrissi Halt', 'Fabian.Knalli B2B Gyri', 'ARVOØ'],
       countdownDate: '2026-11-07T22:00:00',
-      tickets: [{}], // PWYW aktiviert — Preise unten in PWYW_PRICES
-      ticketUrl: '', // ← Ticket-Link hier eintragen (z.B. Eventbrite, eigene Seite)
-      mainPhoto: 'https://picsum.photos/seed/cube3main/1200/800',
+      tickets: [{}],
+      ticketUrl: '', // ← Ticket-Link hier eintragen
+      mainPhoto: 'photos/cubetopia3-nr1.jpg',
       gallery: [
-        'https://picsum.photos/seed/cube3g1/900/600',
-        'https://picsum.photos/seed/cube3g2/600/450',
-        'https://picsum.photos/seed/cube3g3/600/450',
-        'https://picsum.photos/seed/cube3g4/600/450',
-        'https://picsum.photos/seed/cube3g5/600/450',
+        'photos/cubetopia3-nr2.jpg',
+        'photos/cubetopia3-nr3.jpg',
+        'photos/cubetopia3-nr4.jpg',
+        'photos/cubetopia3-nr5.jpg',
       ],
     },
     // ── PAST ──
@@ -33,13 +32,12 @@
       venue:  'MÜNCHEN',
       time:   '22:00 — OPEN END',
       lineup: ['ARTIST NAME', 'ARTIST NAME', 'ARTIST NAME'],
-      mainPhoto: 'https://picsum.photos/seed/cube2main/1200/800',
+      mainPhoto: 'photos/cubetopia2-nr1.jpg',
       gallery: [
-        'https://picsum.photos/seed/cube2g1/900/600',
-        'https://picsum.photos/seed/cube2g2/600/450',
-        'https://picsum.photos/seed/cube2g3/600/450',
-        'https://picsum.photos/seed/cube2g4/600/450',
-        'https://picsum.photos/seed/cube2g5/600/450',
+        'photos/cubetopia2-nr2.jpg',
+        'photos/cubetopia2-nr3.jpg',
+        'photos/cubetopia2-nr4.jpg',
+        'photos/cubetopia2-nr5.jpg',
       ],
     },
     {
@@ -50,13 +48,12 @@
       venue:  'MÜNCHEN',
       time:   '22:00 — OPEN END',
       lineup: ['ARTIST NAME', 'ARTIST NAME'],
-      mainPhoto: 'https://picsum.photos/seed/cube1main/1200/800',
+      mainPhoto: 'photos/cubetopia1-nr1.jpg',
       gallery: [
-        'https://picsum.photos/seed/cube1g1/900/600',
-        'https://picsum.photos/seed/cube1g2/600/450',
-        'https://picsum.photos/seed/cube1g3/600/450',
-        'https://picsum.photos/seed/cube1g4/600/450',
-        'https://picsum.photos/seed/cube1g5/600/450',
+        'photos/cubetopia1-nr2.jpg',
+        'photos/cubetopia1-nr3.jpg',
+        'photos/cubetopia1-nr4.jpg',
+        'photos/cubetopia1-nr5.jpg',
       ],
     },
   ];
