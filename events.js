@@ -47,7 +47,7 @@
       date:   '27.09.2025',
       venue:  'MÜNCHEN',
       time:   '22:00 — OPEN END',
-      lineup: ['ARTIST NAME', 'ARTIST NAME'],
+      lineup: ['Gyri', 'EDI K.', 'Gregor Gutmann'],
       mainPhoto: 'photos/cubetopia1-nr2.jpeg',
       gallery: [
         'photos/cubetopia1-nr1.jpeg',
