@@ -52,7 +52,7 @@
       gallery: [
         'photos/cubetopia1-nr1.jpeg',
         'photos/cubetopia1-nr3.jpeg',
-        'photos/cubetopia1-nr4.jpeg',
+        'photos/cubetopia1-nr4.mp4',
         'photos/cubetopia1-nr5.jpeg',
       ],
     },
@@ -202,10 +202,14 @@
       </div>
     `).join('');
 
-    // Photo mosaic
-    document.getElementById('edp-gallery-grid').innerHTML = ev.gallery.map((src, i) =>
-      `<div class="edp-mosaic-item"><img src="${src}" alt="Foto ${i + 1}" loading="lazy"></div>`
-    ).join('');
+    // Photo mosaic — unterstützt Bilder und Videos
+    document.getElementById('edp-gallery-grid').innerHTML = ev.gallery.map((src, i) => {
+      const isVideo = /\.(mp4|webm|mov)$/i.test(src);
+      const media = isVideo
+        ? `<video src="${src}" autoplay loop muted playsinline></video>`
+        : `<img src="${src}" alt="Foto ${i + 1}" loading="lazy">`;
+      return `<div class="edp-mosaic-item">${media}</div>`;
+    }).join('');
 
     // Recap footer
     document.getElementById('edp-recap-badge').textContent = `EVENT ABGESCHLOSSEN — ${ev.date}`;
@@ -420,9 +424,12 @@
     const photosEl = document.getElementById('evt-bs-photos');
     if (photosEl) {
       const photos = (ev.gallery || []).slice(0, 3);
-      photosEl.innerHTML = photos.map(src =>
-        `<img src="${src}" class="evt-bs-photo" alt="" loading="lazy">`
-      ).join('');
+      photosEl.innerHTML = photos.map(src => {
+        const isVideo = /\.(mp4|webm|mov)$/i.test(src);
+        return isVideo
+          ? `<video src="${src}" class="evt-bs-photo" autoplay loop muted playsinline></video>`
+          : `<img src="${src}" class="evt-bs-photo" alt="" loading="lazy">`;
+      }).join('');
     }
 
     // Upcoming-Event → PWYW + Anzahl-Selektor

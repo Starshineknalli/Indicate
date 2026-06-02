@@ -426,12 +426,14 @@
       gap: 4px;
     }
     .edp-mosaic-item { overflow: hidden; position: relative; background: #060606; }
-    .edp-mosaic-item img {
+    .edp-mosaic-item img,
+    .edp-mosaic-item video {
       width: 100%; height: 100%; object-fit: cover; display: block;
       filter: grayscale(75%) brightness(0.65) contrast(1.15);
       transition: filter .65s, transform .65s;
     }
-    .edp-mosaic-item:hover img {
+    .edp-mosaic-item:hover img,
+    .edp-mosaic-item:hover video {
       filter: grayscale(20%) brightness(0.85) contrast(1.1);
       transform: scale(1.06);
     }
