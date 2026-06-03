@@ -26,13 +26,14 @@
 
   <link rel="stylesheet" href="shared.css" />
   <style>
-    /* ── SCROLL SETUP — free natural scroll, no snap on homepage ── */
-    html { height: 100%; overflow: hidden; }
+    /* ── SCROLL SETUP ── */
+    html {
+      overflow-x: hidden;
+    }
     body {
-      height: 100%;
-      overflow-y: auto;
+      min-height: 100vh;
+      overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
-      overscroll-behavior-y: none;
     }
 
     /* ── STATIC BACKGROUND ── */
@@ -73,11 +74,6 @@
         rgba(0,0,0,0.06) 0px, rgba(0,0,0,0.06) 1px,
         transparent 1px, transparent 4px
       );
-    }
-    #grain-canvas {
-      position: fixed; inset: 0; pointer-events: none; z-index: 24;
-      opacity: 0.05; mix-blend-mode: screen; image-rendering: pixelated;
-      width: 100%; height: 100%;
     }
     .corner {
       position: fixed; width: 28px; height: 28px; z-index: 26;
@@ -468,7 +464,6 @@
 
   <!-- ATMOSPHERE -->
   <div class="scanlines"></div>
-  <canvas id="grain-canvas"></canvas>
   <div class="corner corner-tl"></div>
   <div class="corner corner-tr"></div>
   <div class="corner corner-bl"></div>
@@ -614,28 +609,6 @@
   <script src="shared.js"></script>
   <script src="password.js"></script>
   <script>
-    // Film grain
-    (function () {
-      const el = document.getElementById('grain-canvas');
-      if (!el) return;
-      const ctx = el.getContext('2d');
-      el.width = 320; el.height = 220;
-      let last = 0;
-      (function frame(t) {
-        requestAnimationFrame(frame);
-        if (t - last < 50) return;
-        last = t;
-        const img = ctx.createImageData(320, 220);
-        for (let i = 0; i < img.data.length; i += 4) {
-          const v = Math.random() * 255 | 0;
-          img.data[i] = img.data[i+1] = img.data[i+2] = v;
-          img.data[i+3] = 255;
-        }
-        ctx.putImageData(img, 0, 0);
-      })(0);
-    })();
-  </script>
-  <script>
     (function () {
       // ── GSAP intro ──
       if (typeof gsap !== 'undefined') {
@@ -679,7 +652,7 @@
       // ── Scroll reveal ──
       const revealIO = new IntersectionObserver((entries) => {
         entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
-      }, { threshold: 0.12, root: document.body });
+      }, { threshold: 0.12 });
       document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
 
     })();
