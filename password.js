@@ -26,14 +26,7 @@
   overlay.innerHTML = `
     <div class="pw-inner">
       <div class="pw-logo">
-        <svg viewBox="0 0 200 232" xmlns="http://www.w3.org/2000/svg" class="pw-logo-svg">
-          <rect x="0" y="0" width="44" height="200" fill="#ffffff"/>
-          <path d="M 52,0 L 118,0 C 178,0 196,44 196,100 C 196,156 178,200 118,200 L 52,200 Z
-                   M 52,44 L 108,44 C 152,44 156,68 156,100 C 156,132 152,156 108,156 L 52,156 Z"
-                fill="#ffffff" fill-rule="evenodd"/>
-          <text x="92" y="226" font-family="Space Mono, monospace" font-size="12.5"
-                letter-spacing="11" fill="rgba(255,255,255,0.88)" text-anchor="middle">INDICATE</text>
-        </svg>
+        <img class="pw-logo-svg" src="photos/INDC-LOGO.png" alt="INDC">
       </div>
       <div class="pw-rule"></div>
       <p class="pw-hint">ZUGANG ERFORDERLICH</p>
