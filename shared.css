@@ -92,7 +92,13 @@ ul { list-style: none; }
   display: flex;
   align-items: center;
   mix-blend-mode: difference;
-  transition: opacity 0.2s;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+.nav-logo.visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 .nav-logo-img {
   height: 30px;
