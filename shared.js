@@ -29,11 +29,24 @@
 
   // ── HAMBURGER TOGGLE ──────────────────────────────────────────
   const burger = document.querySelector('.nav-burger');
+  function closeMenu() {
+    burger.classList.remove('open');
+    navOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
   if (burger) {
     burger.addEventListener('click', () => {
       const isOpen = burger.classList.toggle('open');
       navOverlay.classList.toggle('open', isOpen);
       document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+    // Schließen bei Klick außerhalb
+    document.addEventListener('click', e => {
+      if (navOverlay.classList.contains('open') &&
+          !navOverlay.contains(e.target) &&
+          !burger.contains(e.target)) {
+        closeMenu();
+      }
     });
   }
 
