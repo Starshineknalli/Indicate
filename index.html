@@ -670,22 +670,22 @@
     })();
   </script>
 
-  <!-- ════ INDC LOGO CANVAS ANIMATION v3 ════ -->
+  <!-- ════ INDC LOGO CANVAS ANIMATION v4 ════ -->
   <script>
   (function () {
     const cv = document.getElementById('indc-logo-canvas');
     if (!cv) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const L = 440;
+    const L = 480;
     cv.width = L * dpr; cv.height = L * dpr;
     const ctx = cv.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    const CX = L / 2, CY = L / 2; // 220
-    const R   = 108;  // ring radius
-    const TL  = 172;  // long ray (N/S/E/W) tip distance
-    const TS  = 142;  // short diagonal ray tip distance
-    const LP  = 194;  // letter center distance from canvas center
+    const CX = L/2, CY = L/2;  // 240
+    const R   = 112;   // ring radius
+    const TL  = 178;   // cardinal ray tip (N/S/E/W)
+    const TS  = 152;   // diagonal ray tip (NE/NW/SE/SW)
+    const LP  = 200;   // letter distance from center
 
     const CARD    = [-Math.PI/2, 0, Math.PI/2, Math.PI];
     const DIAG    = [-Math.PI*3/4, -Math.PI/4, Math.PI/4, Math.PI*3/4];
@@ -693,187 +693,228 @@
 
     let ringOff = 0;
 
-    // Particles
-    const parts = Array.from({length: 60}, (_, i) => ({
-      a:   (i/60) * Math.PI * 2,
-      spd: (0.003 + Math.random() * 0.008) * (Math.random() < 0.18 ? -1 : 1),
-      r:   R + (Math.random() - 0.5) * 12,
-      al:  0.2 + Math.random() * 0.65,
-      sz:  0.5 + Math.random() * 1.4,
+    const parts = Array.from({length: 55}, (_, i) => ({
+      a:   (i/55)*Math.PI*2,
+      spd: (0.003 + Math.random()*0.007) * (Math.random()<0.18?-1:1),
+      r:   R + (Math.random()-0.5)*14,
+      al:  0.18 + Math.random()*0.6,
+      sz:  0.5 + Math.random()*1.5,
       tr:  [],
     }));
 
-    let bolt = null, boltTimer = (Math.random() * 160) | 0;
-    const BINT = 185;
+    let bolt=null, boltTimer=(Math.random()*150)|0;
+    const BINT=180;
 
-    // ── helpers ───────────────────────────────────────────────
     function rg(x, y, r0, r1, a0, a1) {
-      const g = ctx.createRadialGradient(x, y, r0, x, y, r1);
+      const g = ctx.createRadialGradient(x,y,r0,x,y,r1);
       g.addColorStop(0, `rgba(255,255,255,${a0})`);
       g.addColorStop(1, `rgba(255,255,255,${a1})`);
       return g;
     }
-
-    function mkBolt(x1, y1, x2, y2, rd, d) {
-      if (!d) return [[x1,y1],[x2,y2]];
-      const mx = (x1+x2)/2 + (Math.random()-.5)*rd;
-      const my = (y1+y2)/2 + (Math.random()-.5)*rd;
+    function mkBolt(x1,y1,x2,y2,rd,d) {
+      if(!d) return [[x1,y1],[x2,y2]];
+      const mx=(x1+x2)/2+(Math.random()-.5)*rd, my=(y1+y2)/2+(Math.random()-.5)*rd;
       return [...mkBolt(x1,y1,mx,my,rd*.55,d-1), ...mkBolt(mx,my,x2,y2,rd*.55,d-1).slice(1)];
     }
 
-    // ── 3-strand barbed-wire ring ─────────────────────────────
+    // ── Organic barbed-wire ring (3 strands + 90 thorns) ─────
     function drawRing() {
-      // 3 overlapping strands = barbed-wire look
-      [{dr:-3,w:0.9,al:.5},{dr:0,w:1.9,al:.88},{dr:3.5,w:0.7,al:.4}].forEach(({dr,w,al}) => {
+      // strand 1: inner thin
+      [{dr:-3.5,w:.85,al:.42},{dr:0,w:2.1,al:.92},{dr:4,w:.65,al:.38}].forEach(({dr,w,al}) => {
         ctx.beginPath();
-        for (let i = 0; i <= 360; i++) {
-          const a  = (i/360) * Math.PI * 2;
+        for (let i=0; i<=400; i++) {
+          const a  = (i/400)*Math.PI*2;
           const an = a + ringOff;
-          const n  = Math.sin(an*11)*2.8 + Math.sin(an*19)*1.4 + Math.sin(an*37)*0.7 + Math.sin(an*67)*0.3;
+          // 5-harmonic noise for organic barbed texture
+          const n = Math.sin(an*11)*3.1 + Math.sin(an*19)*1.6
+                  + Math.sin(an*37)*0.8 + Math.sin(an*71)*0.4
+                  + Math.sin(an*113)*0.18;
           const r  = R + dr + n;
-          const x  = CX + Math.cos(a)*r, y = CY + Math.sin(a)*r;
+          const x  = CX+Math.cos(a)*r, y=CY+Math.sin(a)*r;
           i ? ctx.lineTo(x,y) : ctx.moveTo(x,y);
         }
         ctx.closePath();
-        ctx.shadowColor='rgba(255,255,255,.5)'; ctx.shadowBlur=8;
+        ctx.shadowColor='rgba(255,255,255,.55)'; ctx.shadowBlur=9;
         ctx.strokeStyle=`rgba(255,255,255,${al})`; ctx.lineWidth=w;
         ctx.stroke(); ctx.shadowBlur=0;
       });
 
-      // Thorn spikes — inward AND outward
-      const NT = 72;
-      for (let i = 0; i < NT; i++) {
-        const a      = (i/NT)*Math.PI*2 + ringOff;
-        const major  = i%4===0, bright=i%8===0, inner=i%5===0;
-        const len    = bright ? 24 : major ? 13 : 6;
-        const hw     = major ? 3.8 : 1.8;
-        const dir    = inner ? -1 : 1;
-        const rx     = CX+Math.cos(a)*R, ry=CY+Math.sin(a)*R;
-        const tx     = CX+Math.cos(a)*(R+len*dir), ty=CY+Math.sin(a)*(R+len*dir);
-        const pa     = a + Math.PI/2;
+      // Thorns — irregular spacing, inward+outward, clusters
+      for (let i=0; i<90; i++) {
+        // pseudo-random offset so thorns cluster organically
+        const baseA = (i/90)*Math.PI*2;
+        const jitter = Math.sin(i*7.3)*0.055 + Math.sin(i*3.7)*0.03;
+        const a   = baseA + ringOff + jitter;
+        // Length varies: rare very-long, common medium, lots tiny
+        const raw = Math.abs(Math.sin(i*2.399)*18 + Math.sin(i*1.618)*10 + Math.sin(i*0.927)*5);
+        const len = Math.max(raw, 2.5);
+        const hw  = len > 16 ? 4.2 : len > 8 ? 2.6 : 1.4;
+        const dir = Math.cos(i*1.732) > 0.15 ? 1 : Math.cos(i*1.732) < -0.15 ? -1 : 1;
+        const rx  = CX+Math.cos(a)*R, ry=CY+Math.sin(a)*R;
+        const tx  = CX+Math.cos(a)*(R+len*dir), ty=CY+Math.sin(a)*(R+len*dir);
+        const pa  = a+Math.PI/2;
         ctx.beginPath();
         ctx.moveTo(tx,ty);
         ctx.lineTo(rx+Math.cos(pa)*hw, ry+Math.sin(pa)*hw);
         ctx.lineTo(rx-Math.cos(pa)*hw, ry-Math.sin(pa)*hw);
         ctx.closePath();
-        const al = bright ? .95 : major ? .68 : .3;
-        if (bright) { ctx.shadowColor='rgba(255,255,255,.9)'; ctx.shadowBlur=14; }
+        const al = len>18?.96 : len>10?.7 : len>5?.38 : .2;
+        if (len>18) { ctx.shadowColor='rgba(255,255,255,.95)'; ctx.shadowBlur=18; }
+        else if (len>10) { ctx.shadowColor='rgba(255,255,255,.5)'; ctx.shadowBlur=8; }
         ctx.fillStyle=`rgba(255,255,255,${al})`; ctx.fill(); ctx.shadowBlur=0;
       }
     }
 
-    // ── Crystal spike (3-layer, one ray of the 8-pointed star)──
+    // ── Crystal blade ray (4 layers) ─────────────────────────
     function drawRay(angle, length, width, t) {
-      const pulse = 1 + Math.sin(t*.75+angle)*.04;
-      const tip   = length * pulse;
-      const cos   = Math.cos(angle), sin=Math.sin(angle);
-      const px    = Math.cos(angle+Math.PI/2), py=Math.sin(angle+Math.PI/2);
-      const tx    = CX+cos*tip, ty=CY+sin*tip;
+      const pulse = 1 + Math.sin(t*.72+angle)*.045;
+      const tip   = length*pulse;
+      const cos=Math.cos(angle), sin=Math.sin(angle);
+      const px=Math.cos(angle+Math.PI/2), py=Math.sin(angle+Math.PI/2);
+      const tx=CX+cos*tip, ty=CY+sin*tip;
 
-      // L1: wide soft glow
+      // L0: outermost bloom
       ctx.beginPath();
       ctx.moveTo(tx,ty);
-      ctx.bezierCurveTo(CX+px*width*2.2+cos*tip*.18,CY+py*width*2.2+sin*tip*.18, CX+px*width*2.2,CY+py*width*2.2, CX,CY);
-      ctx.bezierCurveTo(CX-px*width*2.2,CY-py*width*2.2, CX-px*width*2.2+cos*tip*.18,CY-py*width*2.2+sin*tip*.18, tx,ty);
-      ctx.fillStyle='rgba(255,255,255,.15)'; ctx.fill();
+      ctx.bezierCurveTo(CX+px*width*3+cos*tip*.12,CY+py*width*3+sin*tip*.12, CX+px*width*3,CY+py*width*3, CX,CY);
+      ctx.bezierCurveTo(CX-px*width*3,CY-py*width*3, CX-px*width*3+cos*tip*.12,CY-py*width*3+sin*tip*.12, tx,ty);
+      ctx.fillStyle='rgba(255,255,255,.08)'; ctx.fill();
 
-      // L2: medium brighter spike
+      // L1: wide glow
       ctx.beginPath();
       ctx.moveTo(tx,ty);
-      ctx.bezierCurveTo(CX+px*width+cos*tip*.38,CY+py*width+sin*tip*.38, CX+px*width,CY+py*width, CX,CY);
-      ctx.bezierCurveTo(CX-px*width,CY-py*width, CX-px*width+cos*tip*.38,CY-py*width+sin*tip*.38, tx,ty);
-      ctx.fillStyle='rgba(255,255,255,.6)'; ctx.fill();
+      ctx.bezierCurveTo(CX+px*width*1.9+cos*tip*.22,CY+py*width*1.9+sin*tip*.22, CX+px*width*1.9,CY+py*width*1.9, CX,CY);
+      ctx.bezierCurveTo(CX-px*width*1.9,CY-py*width*1.9, CX-px*width*1.9+cos*tip*.22,CY-py*width*1.9+sin*tip*.22, tx,ty);
+      ctx.fillStyle='rgba(255,255,255,.2)'; ctx.fill();
 
-      // L3: razor bright core
+      // L2: main blade
       ctx.beginPath();
       ctx.moveTo(tx,ty);
-      ctx.bezierCurveTo(CX+px*width*.32+cos*tip*.56,CY+py*width*.32+sin*tip*.56, CX+px*width*.32,CY+py*width*.32, CX,CY);
-      ctx.bezierCurveTo(CX-px*width*.32,CY-py*width*.32, CX-px*width*.32+cos*tip*.56,CY-py*width*.32+sin*tip*.56, tx,ty);
-      ctx.shadowColor='rgba(255,255,255,.95)'; ctx.shadowBlur=20;
-      ctx.fillStyle='rgba(255,255,255,.97)'; ctx.fill(); ctx.shadowBlur=0;
+      ctx.bezierCurveTo(CX+px*width+cos*tip*.42,CY+py*width+sin*tip*.42, CX+px*width,CY+py*width, CX,CY);
+      ctx.bezierCurveTo(CX-px*width,CY-py*width, CX-px*width+cos*tip*.42,CY-py*width+sin*tip*.42, tx,ty);
+      ctx.fillStyle='rgba(255,255,255,.65)'; ctx.fill();
+
+      // L3: razor bright centre line
+      ctx.beginPath();
+      ctx.moveTo(tx,ty);
+      ctx.bezierCurveTo(CX+px*width*.28+cos*tip*.6,CY+py*width*.28+sin*tip*.6, CX+px*width*.28,CY+py*width*.28, CX,CY);
+      ctx.bezierCurveTo(CX-px*width*.28,CY-py*width*.28, CX-px*width*.28+cos*tip*.6,CY-py*width*.28+sin*tip*.6, tx,ty);
+      ctx.shadowColor='rgba(255,255,255,1)'; ctx.shadowBlur=22;
+      ctx.fillStyle='rgba(255,255,255,.98)'; ctx.fill(); ctx.shadowBlur=0;
     }
 
-    // ── Dramatic lens flare (8 gradient rays + glow core) ────
+    // ── Lens flare: 4 long + 4 short cardinal-aligned rays ───
     function drawFlare(x, y, size, t, ph) {
-      const p  = .58 + Math.sin(t*1.35+ph)*.38;
-      const s  = size * p;
-      // 8 rays (every 45°) — alternating long/short
-      for (let i = 0; i < 8; i++) {
-        const a  = (i/8)*Math.PI*2;
-        const ll = (i%2===0 ? s*3.2 : s*1.8);
+      const p = .62 + Math.sin(t*1.3+ph)*.35;
+      const s = size*p;
+
+      // 4 long cardinal rays
+      [0, Math.PI/2, Math.PI, Math.PI*3/2].forEach(a => {
+        const ll = s*4.8;
         const lg = ctx.createLinearGradient(x,y, x+Math.cos(a)*ll, y+Math.sin(a)*ll);
-        lg.addColorStop(0,  `rgba(255,255,255,${(i%2===0?.82:.45)*p})`);
-        lg.addColorStop(.4, `rgba(255,255,255,${(i%2===0?.3:.15)*p})`);
+        lg.addColorStop(0,  `rgba(255,255,255,${.88*p})`);
+        lg.addColorStop(.25,`rgba(255,255,255,${.42*p})`);
         lg.addColorStop(1,  'rgba(255,255,255,0)');
         ctx.beginPath(); ctx.moveTo(x,y);
         ctx.lineTo(x+Math.cos(a)*ll, y+Math.sin(a)*ll);
-        ctx.strokeStyle=lg; ctx.lineWidth=i%2===0?1.4:.5;
-        ctx.shadowColor='rgba(255,255,255,.75)'; ctx.shadowBlur=6;
+        ctx.strokeStyle=lg; ctx.lineWidth=1.6;
+        ctx.shadowColor='rgba(255,255,255,.8)'; ctx.shadowBlur=10;
         ctx.stroke(); ctx.shadowBlur=0;
-      }
-      ctx.fillStyle=rg(x,y,0,s*2,.4,0);
-      ctx.beginPath(); ctx.arc(x,y,s*2,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle=rg(x,y,0,s*.9,1,0);
-      ctx.beginPath(); ctx.arc(x,y,s*.9,0,Math.PI*2); ctx.fill();
+      });
+
+      // 4 shorter diagonal rays
+      [Math.PI/4, Math.PI*3/4, Math.PI*5/4, Math.PI*7/4].forEach(a => {
+        const ll = s*2.5;
+        const lg = ctx.createLinearGradient(x,y, x+Math.cos(a)*ll, y+Math.sin(a)*ll);
+        lg.addColorStop(0,  `rgba(255,255,255,${.55*p})`);
+        lg.addColorStop(1,  'rgba(255,255,255,0)');
+        ctx.beginPath(); ctx.moveTo(x,y);
+        ctx.lineTo(x+Math.cos(a)*ll, y+Math.sin(a)*ll);
+        ctx.strokeStyle=lg; ctx.lineWidth=.8;
+        ctx.stroke();
+      });
+
+      // Outer soft halo
+      ctx.fillStyle=rg(x,y,0,s*2.8,.28,0);
+      ctx.beginPath(); ctx.arc(x,y,s*2.8,0,Math.PI*2); ctx.fill();
+      // Bright core
+      ctx.fillStyle=rg(x,y,0,s*1.1,1,0);
+      ctx.beginPath(); ctx.arc(x,y,s*1.1,0,Math.PI*2); ctx.fill();
     }
 
-    // ── Center cross glow ─────────────────────────────────────
+    // ── Blazing center ────────────────────────────────────────
     function drawCenter(t) {
-      const p = .8 + Math.sin(t*1.1)*.18;
-      ctx.fillStyle=rg(CX,CY,0,50*p,p*.85,0);
-      ctx.beginPath(); ctx.arc(CX,CY,50*p,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle=rg(CX,CY,0,18*p,1,0);
-      ctx.beginPath(); ctx.arc(CX,CY,18*p,0,Math.PI*2); ctx.fill();
+      const p = .85 + Math.sin(t*1.08)*.14;
+      // Outer bloom
+      ctx.fillStyle=rg(CX,CY,0,70*p,.65,0);
+      ctx.beginPath(); ctx.arc(CX,CY,70*p,0,Math.PI*2); ctx.fill();
+      // Mid glow
+      ctx.fillStyle=rg(CX,CY,0,38*p,.9,0);
+      ctx.beginPath(); ctx.arc(CX,CY,38*p,0,Math.PI*2); ctx.fill();
+      // Blinding hot core
+      ctx.shadowColor='rgba(255,255,255,1)'; ctx.shadowBlur=30;
+      ctx.fillStyle=rg(CX,CY,0,14*p,1,0);
+      ctx.beginPath(); ctx.arc(CX,CY,14*p,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
     }
 
     // ── Lightning ─────────────────────────────────────────────
     function drawBolt(b, al) {
       ctx.save(); ctx.globalAlpha=al;
-      ctx.lineWidth=7; ctx.strokeStyle='rgba(140,200,255,.18)';
-      ctx.shadowColor='rgba(120,185,255,.95)'; ctx.shadowBlur=32;
+      ctx.lineWidth=8; ctx.strokeStyle='rgba(120,190,255,.15)';
+      ctx.shadowColor='rgba(100,175,255,1)'; ctx.shadowBlur=35;
       ctx.beginPath(); b.path.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)); ctx.stroke();
-      ctx.lineWidth=1.4; ctx.strokeStyle='rgba(255,255,255,.98)'; ctx.shadowBlur=6;
+      ctx.lineWidth=1.5; ctx.strokeStyle='rgba(255,255,255,.99)'; ctx.shadowBlur=7;
       ctx.beginPath(); b.path.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)); ctx.stroke();
       ctx.restore();
     }
 
-    // ── Letters I N D C (serif, large) ───────────────────────
+    // ── Letters I N D C ───────────────────────────────────────
     function drawLetters(t) {
-      ctx.font='bold 42px Georgia,serif';
+      ctx.font='bold 44px Georgia,serif';
       ctx.textAlign='center'; ctx.textBaseline='middle';
       LETTERS.forEach(([ch,a]) => {
         const x=CX+Math.cos(a)*LP, y=CY+Math.sin(a)*LP;
-        const fl=Math.random()>.989?(Math.random()-.5)*8:0;
-        ctx.shadowColor='rgba(255,255,255,.8)'; ctx.shadowBlur=18;
-        ctx.fillStyle=`rgba(255,255,255,${.9+Math.sin(t*.5+a)*.09})`;
+        const fl=Math.random()>.99?(Math.random()-.5)*7:0;
+        ctx.shadowColor='rgba(255,255,255,.85)'; ctx.shadowBlur=20;
+        ctx.fillStyle=`rgba(255,255,255,${.92+Math.sin(t*.48+a)*.07})`;
         ctx.fillText(ch,x+fl,y+fl);
       }); ctx.shadowBlur=0;
     }
 
     // ── Main loop ─────────────────────────────────────────────
-    let t = 0;
+    let t=0;
     function frame() {
       ctx.clearRect(0,0,L,L);
 
-      // 1. Ring (behind everything)
+      // 1. Ring behind everything
       drawRing();
 
-      // 2. 8-pointed star: diagonal rays first (shorter, behind)
-      DIAG.forEach(a => drawRay(a, TS, 3.2, t));
-      // 3. Cardinal rays on top (longer, brighter)
-      CARD.forEach(a => drawRay(a, TL, 5.8, t));
+      // 2. Diagonal rays (shorter, drawn first/behind)
+      DIAG.forEach(a => drawRay(a, TS, 3.5, t));
 
-      // 4. Center glow
+      // 3. Cardinal rays (longer, on top)
+      CARD.forEach(a => drawRay(a, TL, 6.2, t));
+
+      // 4. Blazing center
       drawCenter(t);
 
-      // 5. Flares at ALL 8 ring intersections
+      // 5a. Cardinal flares at ring intersection — LARGE
       CARD.forEach((a,i) => {
         const x=CX+Math.cos(a)*R, y=CY+Math.sin(a)*R;
-        drawFlare(x, y, 14, t, i*Math.PI/2);       // large at cardinal
+        drawFlare(x, y, 18, t, i*Math.PI/2);
       });
+
+      // 5b. Diagonal flares at diagonal tip — SAME PROMINENCE
+      DIAG.forEach((a,i) => {
+        const x=CX+Math.cos(a)*TS, y=CY+Math.sin(a)*TS;
+        drawFlare(x, y, 15, t, i*Math.PI/4+0.8);
+      });
+
+      // 5c. Small ambient flares at ring diagonal positions
       DIAG.forEach((a,i) => {
         const x=CX+Math.cos(a)*R, y=CY+Math.sin(a)*R;
-        drawFlare(x, y, 9, t, i*Math.PI/4+Math.PI); // smaller at diagonal
+        drawFlare(x, y, 7, t, i*Math.PI/4+2.2);
       });
 
       // 6. Particles + trails
@@ -883,7 +924,7 @@
         p.tr.unshift({x,y}); if(p.tr.length>5) p.tr.pop();
         p.tr.forEach((pt,i) => {
           ctx.beginPath(); ctx.arc(pt.x,pt.y,p.sz*(1-i*.16),0,Math.PI*2);
-          ctx.fillStyle=`rgba(255,255,255,${p.al*(1-i/5)*.6})`; ctx.fill();
+          ctx.fillStyle=`rgba(255,255,255,${p.al*(1-i/5)*.55})`; ctx.fill();
         });
       });
 
@@ -893,20 +934,20 @@
         const i1=Math.random()*4|0; let i2;
         do{i2=Math.random()*4|0}while(i2===i1);
         bolt={path:mkBolt(CX+Math.cos(CARD[i1])*R,CY+Math.sin(CARD[i1])*R,
-                          CX+Math.cos(CARD[i2])*R,CY+Math.sin(CARD[i2])*R,48,4),life:0,max:28};
+                          CX+Math.cos(CARD[i2])*R,CY+Math.sin(CARD[i2])*R,52,4),life:0,max:30};
         boltTimer=0;
       }
-      if (bolt) {
+      if(bolt){
         bolt.life++;
         const pr=bolt.life/bolt.max;
-        drawBolt(bolt, pr<.2?pr/.2:1-(pr-.2)/.8);
+        drawBolt(bolt, pr<.18?pr/.18:1-(pr-.18)/.82);
         if(bolt.life>=bolt.max) bolt=null;
       }
 
-      // 8. Letters (front)
+      // 8. Letters (always on top)
       drawLetters(t);
 
-      ringOff += 0.00022;
+      ringOff += 0.0002;
       t       += 0.016;
       requestAnimationFrame(frame);
     }
