@@ -110,21 +110,43 @@ ul { list-style: none; }
 
 .nav-links {
   display: flex;
-  gap: 2.5rem;
-  mix-blend-mode: difference;
+  gap: 3rem;
 }
 .nav-links a {
-  font-size: 0.62rem;
-  letter-spacing: 0.32em;
-  color: var(--white);
-  transition: opacity 0.2s;
+  position: relative;
+  font-size: 0.66rem;
+  letter-spacing: 0.42em;
+  color: rgba(255,255,255,0.45);
+  transition: color 0.3s ease, text-shadow 0.3s ease, letter-spacing 0.3s ease;
   touch-action: manipulation;
   min-height: 44px;
   display: flex;
   align-items: center;
+  padding-bottom: 3px;
+}
+/* Rote Underline — schiebt sich von links rein */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 1px;
+  width: 0;
+  background: var(--red);
+  box-shadow: 0 0 8px rgba(224,0,0,0.9), 0 0 20px rgba(224,0,0,0.45);
+  transition: width 0.4s cubic-bezier(0.76, 0, 0.24, 1);
 }
 .nav-links a:hover,
-.nav-links a.active { opacity: 0.4; }
+.nav-links a.active {
+  color: var(--white);
+  letter-spacing: 0.48em;
+  text-shadow:
+    0 0 10px rgba(255,255,255,0.6),
+    0 0 28px rgba(224,0,0,0.35);
+}
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  width: 100%;
+}
 
 /* ── PAGE TRANSITION OVERLAY ── */
 .page-transition {
