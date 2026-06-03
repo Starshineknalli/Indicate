@@ -58,28 +58,6 @@
     },
   ];
 
-  // ── FILM GRAIN ────────────────────────────────────────────────────────────
-  const noiseCanvas = document.getElementById('noise-canvas');
-  const noiseCtx    = noiseCanvas.getContext('2d');
-  noiseCanvas.width  = 360;
-  noiseCanvas.height = 240;
-
-  let lastNoise = 0;
-  function renderNoise(ts) {
-    requestAnimationFrame(renderNoise);
-    if (ts - lastNoise < 40) return;
-    lastNoise = ts;
-    const img  = noiseCtx.createImageData(360, 240);
-    const data = img.data;
-    for (let i = 0; i < data.length; i += 4) {
-      const v = Math.random() * 255 | 0;
-      data[i] = data[i+1] = data[i+2] = v;
-      data[i+3] = 255;
-    }
-    noiseCtx.putImageData(img, 0, 0);
-  }
-  requestAnimationFrame(renderNoise);
-
   // ── COUNTDOWN HELPER ──────────────────────────────────────────────────────
   function buildCountdown(el, dateStr) {
     const target = new Date(dateStr).getTime();

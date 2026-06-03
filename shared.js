@@ -1,52 +1,69 @@
 /* INDICATE — shared.js */
-/* Page transitions + nav active state */
 
 (function () {
+  // ── PAGE TRANSITION ────────────────────────────────────────────
   const overlay = document.querySelector('.page-transition');
-  if (!overlay) return;
-
-  // Entrance: slide overlay out on page load
-  window.addEventListener('load', () => {
-    requestAnimationFrame(() => {
-      overlay.classList.add('out');
+  if (overlay) {
+    window.addEventListener('load', () => {
+      requestAnimationFrame(() => overlay.classList.add('out'));
     });
-  });
-
-  // Intercept nav clicks for transition
-  document.querySelectorAll('a[data-transition]').forEach(link => {
-    link.addEventListener('click', e => {
-      const href = link.getAttribute('href');
-      if (!href || href.startsWith('#')) return;
-      e.preventDefault();
-      overlay.classList.remove('out');
-      overlay.classList.add('in');
-      setTimeout(() => {
-        window.location.href = href;
-      }, 480);
-    });
-  });
-
-  // Mark active nav link
-  const path = window.location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('.nav-links a').forEach(a => {
-    const linkFile = a.getAttribute('href').split('/').pop();
-    if (linkFile === path) a.classList.add('active');
-  });
-
-  // Nav-Logo: auf index.html erst sichtbar nach dem Hero, sofort auf anderen Seiten
-  const navLogo = document.querySelector('.nav-logo');
-  if (navLogo) {
-    const heroSection = document.getElementById('section-hero');
-    if (!heroSection) {
-      // Nicht auf der Startseite — Logo immer sichtbar
-      navLogo.classList.add('visible');
-    } else {
-      const onScroll = () => {
-        const heroBottom = heroSection.getBoundingClientRect().bottom;
-        navLogo.classList.toggle('visible', heroBottom < 80);
-      };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
-    }
   }
+
+  // ── INJECT NAV OVERLAY ─────────────────────────────────────────
+  const navOverlay = document.createElement('div');
+  navOverlay.className = 'nav-overlay';
+  navOverlay.id = 'nav-overlay';
+  navOverlay.innerHTML = `
+    <nav class="nav-overlay-main">
+      <a href="events.html"     data-transition>EVENTS</a>
+      <a href="collective.html" data-transition>KOLLEKTIV</a>
+    </nav>
+    <div class="nav-overlay-divider"></div>
+    <nav class="nav-overlay-legal">
+      <a href="datenschutz.html" data-transition>DATENSCHUTZ</a>
+      <a href="impressum.html"   data-transition>IMPRESSUM</a>
+    </nav>
+  `;
+  document.body.appendChild(navOverlay);
+
+  // ── HAMBURGER TOGGLE ──────────────────────────────────────────
+  const burger = document.querySelector('.nav-burger');
+  if (burger) {
+    burger.addEventListener('click', () => {
+      const isOpen = burger.classList.toggle('open');
+      navOverlay.classList.toggle('open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+  }
+
+  // ── PAGE TRANSITION ON OVERLAY LINKS ─────────────────────────
+  function setupTransitionLinks(scope) {
+    scope.querySelectorAll('a[data-transition]').forEach(link => {
+      link.addEventListener('click', e => {
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#')) return;
+        e.preventDefault();
+        // Close overlay first
+        if (burger) { burger.classList.remove('open'); }
+        navOverlay.classList.remove('open');
+        document.body.style.overflow = '';
+        if (overlay) {
+          overlay.classList.remove('out');
+          overlay.classList.add('in');
+          setTimeout(() => { window.location.href = href; }, 480);
+        } else {
+          window.location.href = href;
+        }
+      });
+    });
+  }
+
+  // Wire up both page links and overlay links
+  setupTransitionLinks(document);
+
+  // ── ACTIVE PAGE MARK ─────────────────────────────────────────
+  const path = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-overlay-main a').forEach(a => {
+    if (a.getAttribute('href') === path) a.style.color = 'rgba(255,255,255,0.55)';
+  });
 })();
