@@ -535,20 +535,20 @@
     }
 
     /* ── Ticket slide — alle Viewports ── */
-    /* ── Legal footer screen ── */
+    /* ── Legal links — fixed bottom-right ── */
     .evt-legal-footer {
-      height: 100svh; scroll-snap-align: start;
-      display: flex; align-items: center; justify-content: center;
-      gap: 2rem; background: #000;
+      position: fixed; bottom: 1.2rem; right: 1.6rem;
+      display: flex; align-items: center; gap: 1rem;
+      z-index: 50; pointer-events: auto;
     }
     .evt-legal-footer a {
-      font-family: var(--font-body); font-size: 0.44rem;
-      letter-spacing: 0.4em; color: rgba(255,255,255,0.18);
+      font-family: var(--font-body); font-size: 0.38rem;
+      letter-spacing: 0.35em; color: rgba(255,255,255,0.15);
       transition: color 0.2s;
     }
-    .evt-legal-footer a:hover { color: rgba(255,255,255,0.55); }
+    .evt-legal-footer a:hover { color: rgba(255,255,255,0.5); }
     .evt-legal-sep {
-      width: 1px; height: 8px; background: rgba(255,255,255,0.1);
+      width: 1px; height: 7px; background: rgba(255,255,255,0.1);
     }
 
     .evt-mobile-slide {
@@ -1118,14 +1118,14 @@
       </div>
     </div>
 
-    <!-- LEGAL FOOTER -->
-    <div class="evt-legal-footer">
-      <a href="impressum.html" data-transition>IMPRESSUM</a>
-      <span class="evt-legal-sep"></span>
-      <a href="datenschutz.html" data-transition>DATENSCHUTZ</a>
-    </div>
-
   </div><!-- /events-scroll -->
+
+  <!-- Legal links fixed bottom-right -->
+  <div class="evt-legal-footer">
+    <a href="impressum.html" data-transition>IMPRESSUM</a>
+    <span class="evt-legal-sep"></span>
+    <a href="datenschutz.html" data-transition>DATENSCHUTZ</a>
+  </div>
 
   <!-- EVENT DETAIL PANEL — AFTERBURN -->
   <div class="event-detail-panel" id="event-detail-panel">
