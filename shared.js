@@ -15,14 +15,16 @@
   navOverlay.id = 'nav-overlay';
   navOverlay.innerHTML = `
     <nav class="nav-overlay-main">
-      <a href="events.html"     data-transition>EVENTS</a>
-      <a href="collective.html" data-transition>KOLLEKTIV</a>
+      <a href="index.html"      data-transition data-num="00">STARTSEITE</a>
+      <a href="events.html"     data-transition data-num="01">EVENTS</a>
+      <a href="collective.html" data-transition data-num="02">KOLLEKTIV</a>
     </nav>
     <div class="nav-overlay-divider"></div>
     <nav class="nav-overlay-legal">
       <a href="datenschutz.html" data-transition>DATENSCHUTZ</a>
       <a href="impressum.html"   data-transition>IMPRESSUM</a>
     </nav>
+    <div class="nav-overlay-footer">MÜNCHEN &nbsp;×&nbsp; SINCE 2025</div>
   `;
   document.body.appendChild(navOverlay);
 
