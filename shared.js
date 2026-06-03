@@ -24,7 +24,6 @@
       <a href="datenschutz.html" data-transition>DATENSCHUTZ</a>
       <a href="impressum.html"   data-transition>IMPRESSUM</a>
     </nav>
-    <div class="nav-overlay-footer">MÜNCHEN &nbsp;×&nbsp; SINCE 2025</div>
   `;
   document.body.appendChild(navOverlay);
 
