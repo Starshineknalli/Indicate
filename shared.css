@@ -93,7 +93,7 @@ ul { list-style: none; }
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   cursor: pointer;
   padding: 14px;
   margin: -14px;
@@ -107,22 +107,22 @@ ul { list-style: none; }
   height: 1px;
   transition: transform 0.38s cubic-bezier(0.76,0,0.24,1), opacity 0.28s ease, background 0.28s ease, width 0.28s ease;
 }
-.nav-burger span:nth-child(1) { width: 36px; background: rgba(255,255,255,0.8); }
-.nav-burger span:nth-child(2) { width: 26px; background: rgba(255,255,255,0.45); }
-.nav-burger span:nth-child(3) { width: 16px; background: rgba(255,255,255,0.22); }
+.nav-burger span:nth-child(1) { width: 44px; background: rgba(255,255,255,0.8); }
+.nav-burger span:nth-child(2) { width: 32px; background: rgba(255,255,255,0.45); }
+.nav-burger span:nth-child(3) { width: 20px; background: rgba(255,255,255,0.22); }
 
 .nav-burger:hover span:nth-child(1) { background: var(--white); }
-.nav-burger:hover span:nth-child(2) { background: rgba(255,255,255,0.7); width: 30px; }
-.nav-burger:hover span:nth-child(3) { background: rgba(255,255,255,0.45); width: 22px; }
+.nav-burger:hover span:nth-child(2) { background: rgba(255,255,255,0.7); width: 36px; }
+.nav-burger:hover span:nth-child(3) { background: rgba(255,255,255,0.45); width: 28px; }
 
 /* X state */
 .nav-burger.open span:nth-child(1) {
-  width: 26px; transform: translateY(13px) rotate(45deg);
+  width: 30px; transform: translateY(15px) rotate(45deg);
   background: var(--white);
 }
 .nav-burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .nav-burger.open span:nth-child(3) {
-  width: 26px; transform: translateY(-13px) rotate(-45deg);
+  width: 30px; transform: translateY(-15px) rotate(-45deg);
   background: var(--white);
 }
 
@@ -132,12 +132,9 @@ ul { list-style: none; }
   top: 0; left: 0;
   z-index: 250;
   width: 260px;
-  padding: 5.8rem 2.6rem 2.4rem;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(28px);
-  -webkit-backdrop-filter: blur(28px);
-  border-right: 1px solid rgba(255,255,255,0.04);
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  padding: 5.8rem 2.6rem 2.4rem 2.8rem;
+  background: transparent;
+  border-left: 1px solid rgba(255,255,255,0.08);
   pointer-events: none;
   opacity: 0;
   transform: translateY(-6px);
@@ -159,7 +156,7 @@ ul { list-style: none; }
   font-family: var(--font-head);
   font-size: 2.2rem;
   letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.5);
+  color: rgba(255,255,255,0.65);
   line-height: 1;
   padding: 0.6rem 0;
   position: relative;
@@ -195,7 +192,7 @@ ul { list-style: none; }
 .nav-overlay-legal a {
   font-size: 0.48rem;
   letter-spacing: 0.4em;
-  color: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.28);
   padding: 0.38rem 0;
   transition: color 0.18s ease;
 }
