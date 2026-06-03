@@ -158,8 +158,7 @@ ul { list-style: none; }
 .nav-burger span {
   position: relative;
   display: block;
-  height: 1px;
-  overflow: hidden;
+  height: 1.5px;
   transition:
     transform  0.44s cubic-bezier(0.76, 0, 0.24, 1),
     opacity    0.3s ease,
