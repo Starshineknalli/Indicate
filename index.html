@@ -118,7 +118,7 @@
     }
     .hero-logo-svg {
       position: relative;
-      width: clamp(140px, 20vw, 280px); height: auto;
+      width: clamp(140px, 20vw, 280px); height: clamp(140px, 20vw, 280px);
       animation:
         logo-glitch-reveal 1.6s ease-out 0.15s both,
         svg-glow           4s ease-in-out 2s infinite;
@@ -462,7 +462,7 @@
   <!-- NAV -->
   <nav class="nav">
     <a href="index.html" class="nav-logo" data-transition>
-      <img src="photos/INDC-LOGO.png" alt="INDC" class="nav-logo-img">
+      <img src="logo-indc.svg" alt="INDC" class="nav-logo-img">
     </a>
     <ul class="nav-links">
       <li><a href="events.html" data-transition>EVENTS</a></li>
@@ -475,7 +475,7 @@
 
     <div class="hero-logo" aria-label="INDC">
       <div class="hero-logo-glow"></div>
-      <img id="hero-logo-svg" class="hero-logo-svg" src="photos/INDC-LOGO.png" alt="INDC">
+      <canvas id="indc-logo-canvas" class="hero-logo-svg"></canvas>
     </div>
 
     <div class="hero-sub" id="hero-sub">
@@ -668,6 +668,157 @@
       document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
 
     })();
+  </script>
+
+  <!-- ════ INDC LOGO CANVAS ANIMATION ════ -->
+  <script>
+  (function () {
+    const cv = document.getElementById('indc-logo-canvas');
+    if (!cv) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const L = 280;
+    cv.width = L * dpr; cv.height = L * dpr;
+    const ctx = cv.getContext('2d');
+    ctx.scale(dpr, dpr);
+    const CX = L / 2, CY = L / 2, R = L * 0.318;
+
+    // Particles
+    const parts = Array.from({ length: 90 }, (_, i) => ({
+      a: (i / 90) * Math.PI * 2,
+      spd: (0.003 + Math.random() * 0.011) * (Math.random() < 0.22 ? -1 : 1),
+      r: R + (Math.random() - 0.5) * 12,
+      al: 0.25 + Math.random() * 0.75,
+      sz: 0.4 + Math.random() * 1.8,
+      tr: [],
+    }));
+
+    const CARD = [-Math.PI / 2, 0, Math.PI / 2, Math.PI];
+    let bolt = null, boltTimer = Math.random() * 200 | 0;
+    const BOLT_INT = 210;
+
+    function rg(x, y, r0, r1, a0, a1) {
+      const g = ctx.createRadialGradient(x, y, r0, x, y, r1);
+      g.addColorStop(0, `rgba(255,255,255,${a0})`);
+      g.addColorStop(1, `rgba(255,255,255,${a1})`);
+      return g;
+    }
+
+    function drawRing(t) {
+      ctx.beginPath();
+      for (let i = 0; i <= 300; i++) {
+        const a = (i / 300) * Math.PI * 2;
+        const n = Math.sin(a * 9 + t * .5) * 2.8 + Math.sin(a * 17 - t * .35) * 1.3 + Math.sin(a * 37 + t * .9) * .6;
+        const r = R + n, x = CX + Math.cos(a) * r, y = CY + Math.sin(a) * r;
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1.6;
+      ctx.shadowColor = 'rgba(255,255,255,.4)'; ctx.shadowBlur = 7;
+      ctx.stroke(); ctx.shadowBlur = 0;
+    }
+
+    function drawSpike(a, t) {
+      const pulse = 1 + Math.sin(t * .85 + a) * .07;
+      const out = (R + 44) * pulse;
+      const cos = Math.cos(a), sin = Math.sin(a);
+      const nx = Math.cos(a + Math.PI / 2), ny = Math.sin(a + Math.PI / 2);
+      const w = 4.5;
+      ctx.beginPath();
+      ctx.moveTo(CX + cos * out, CY + sin * out);
+      ctx.bezierCurveTo(CX + nx * w + cos * R * .55, CY + ny * w + sin * R * .55, CX + nx * w, CY + ny * w, CX, CY);
+      ctx.bezierCurveTo(CX - nx * w, CY - ny * w, CX - nx * w + cos * R * .55, CY - ny * w + sin * R * .55, CX + cos * out, CY + sin * out);
+      ctx.shadowColor = 'rgba(255,255,255,.6)'; ctx.shadowBlur = 15;
+      ctx.fillStyle = 'white'; ctx.fill(); ctx.shadowBlur = 0;
+    }
+
+    function drawFlare(x, y, t, ph) {
+      const p = .5 + Math.sin(t * 1.4 + ph) * .4;
+      ctx.fillStyle = rg(x, y, 0, 24 * p, .85 * p, 0);
+      ctx.beginPath(); ctx.arc(x, y, 24 * p, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = rg(x, y, 0, 8 * p, p, 0);
+      ctx.beginPath(); ctx.arc(x, y, 8 * p, 0, Math.PI * 2); ctx.fill();
+    }
+
+    function drawDiag(a, t) {
+      const d = R + 68, x = CX + Math.cos(a) * d, y = CY + Math.sin(a) * d;
+      const al = .18 + Math.sin(t * 1.1 + a) * .08;
+      ctx.beginPath();
+      ctx.moveTo(CX + Math.cos(a) * (R + 15), CY + Math.sin(a) * (R + 15));
+      ctx.lineTo(x, y);
+      ctx.strokeStyle = `rgba(255,255,255,${al})`; ctx.lineWidth = .6; ctx.stroke();
+      ctx.fillStyle = rg(x, y, 0, 12, al * 1.5, 0);
+      ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI * 2); ctx.fill();
+    }
+
+    function mkBolt(x1, y1, x2, y2, rg, d) {
+      if (d === 0) return [[x1, y1], [x2, y2]];
+      const mx = (x1 + x2) / 2 + (Math.random() - .5) * rg;
+      const my = (y1 + y2) / 2 + (Math.random() - .5) * rg;
+      return [...mkBolt(x1, y1, mx, my, rg * .55, d - 1), ...mkBolt(mx, my, x2, y2, rg * .55, d - 1).slice(1)];
+    }
+
+    function drawBolt(b, al) {
+      const { path } = b;
+      ctx.save(); ctx.globalAlpha = al;
+      ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(180,210,255,.25)';
+      ctx.shadowColor = 'rgba(160,200,255,.9)'; ctx.shadowBlur = 22;
+      ctx.beginPath(); path.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke();
+      ctx.lineWidth = 1.2; ctx.strokeStyle = 'rgba(255,255,255,.95)'; ctx.shadowBlur = 4;
+      ctx.beginPath(); path.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawLetter(ch, a, t) {
+      const x = CX + Math.cos(a) * (R + 53), y = CY + Math.sin(a) * (R + 53);
+      const fl = Math.random() > .987 ? (Math.random() - .5) * 6 : 0;
+      ctx.font = 'bold 23px Georgia,serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.shadowColor = 'rgba(255,255,255,.7)'; ctx.shadowBlur = 12;
+      ctx.fillStyle = `rgba(255,255,255,${.8 + Math.sin(t * .6 + a) * .18})`;
+      ctx.fillText(ch, x + fl, y + fl); ctx.shadowBlur = 0;
+    }
+
+    const LETTERS = [['I', -Math.PI/2], ['N', 0], ['D', Math.PI/2], ['C', Math.PI]];
+    const DIAG = [-Math.PI*3/4, -Math.PI/4, Math.PI/4, Math.PI*3/4];
+
+    let t = 0;
+    function frame() {
+      ctx.clearRect(0, 0, L, L);
+      drawRing(t);
+      CARD.forEach(a => drawSpike(a, t));
+      DIAG.forEach(a => drawDiag(a, t));
+      CARD.forEach((a, i) => drawFlare(CX + Math.cos(a) * R, CY + Math.sin(a) * R, t, i * Math.PI / 2));
+
+      parts.forEach(p => {
+        p.a += p.spd;
+        const x = CX + Math.cos(p.a) * p.r, y = CY + Math.sin(p.a) * p.r;
+        p.tr.unshift({ x, y });
+        if (p.tr.length > 6) p.tr.pop();
+        p.tr.forEach((pt, i) => {
+          ctx.beginPath(); ctx.arc(pt.x, pt.y, p.sz * (1 - i * .13), 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,255,255,${p.al * (1 - i / 6) * .7})`; ctx.fill();
+        });
+      });
+
+      boltTimer++;
+      if (!bolt && boltTimer >= BOLT_INT) {
+        const i1 = Math.random() * 4 | 0;
+        let i2; do { i2 = Math.random() * 4 | 0; } while (i2 === i1);
+        bolt = { path: mkBolt(CX + Math.cos(CARD[i1]) * R, CY + Math.sin(CARD[i1]) * R, CX + Math.cos(CARD[i2]) * R, CY + Math.sin(CARD[i2]) * R, 38, 4), life: 0, max: 22 };
+        boltTimer = 0;
+      }
+      if (bolt) {
+        bolt.life++;
+        const pr = bolt.life / bolt.max;
+        drawBolt(bolt, pr < .25 ? pr / .25 : 1 - (pr - .25) / .75);
+        if (bolt.life >= bolt.max) bolt = null;
+      }
+
+      LETTERS.forEach(([ch, a]) => drawLetter(ch, a, t));
+      t += 0.016;
+      requestAnimationFrame(frame);
+    }
+    frame();
+  })();
   </script>
 </body>
 </html>
