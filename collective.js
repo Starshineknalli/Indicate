@@ -100,6 +100,20 @@
     });
   });
 
+  // ── LASER BURN REVEAL ─────────────────────────────────────────────────────
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const screen = entry.target;
+      if (entry.isIntersecting && !screen.classList.contains('is-visible')) {
+        screen.classList.add('is-visible');
+        // After reveal completes (~1.3s), switch to breathing animation
+        setTimeout(() => screen.classList.add('photo-revealed'), 1350);
+      }
+    });
+  }, { threshold: 0.45, root: document.body });
+
+  document.querySelectorAll('.member-screen').forEach(s => revealObserver.observe(s));
+
   // ── PROGRESS DOTS ─────────────────────────────────────────────────────────
   const progressEl = document.getElementById('collective-progress');
   const screens    = Array.from(document.getElementById('collective-scroll').children);
