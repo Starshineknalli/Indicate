@@ -63,9 +63,9 @@
   // Wire up both page links and overlay links
   setupTransitionLinks(document);
 
-  // ── ACTIVE PAGE MARK ─────────────────────────────────────────
+  // ── AKTIVE SEITE MARKIEREN ────────────────────────────────────
   const path = window.location.pathname.split('/').pop() || 'index.html';
   document.querySelectorAll('.nav-overlay-main a').forEach(a => {
-    if (a.getAttribute('href') === path) a.style.color = 'rgba(255,255,255,0.55)';
+    if (a.getAttribute('href') === path) a.classList.add('current');
   });
 })();
