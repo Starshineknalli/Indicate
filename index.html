@@ -25,7 +25,7 @@
   <script>if(!sessionStorage.getItem('indicate_auth')){document.documentElement.classList.add('pw-lock')}</script>
 
   <link rel="stylesheet" href="https://use.typekit.net/olg1qlx.css">
-  <link rel="stylesheet" href="shared.css?v=8" />
+  <link rel="stylesheet" href="shared.css?v=9" />
   <style>
     /* ── SCROLL SETUP ── */
     html {
@@ -145,12 +145,12 @@
     .hns-event { font-family: var(--font-head); font-size: 0.85rem; letter-spacing: 0.08em; color: var(--white); }
     .hns-venue { font-size: 0.46rem; letter-spacing: 0.25em; color: var(--grey); margin-top: 0.2rem; }
     .hns-countdown {
-      display: flex; gap: 1rem; align-items: flex-start;
+      display: flex; gap: 0.7rem; align-items: flex-start; flex-wrap: wrap;
     }
     .hns-unit { text-align: center; }
-    .hns-num   { font-family: var(--font-head); font-size: 1.3rem; line-height: 1; color: var(--white); display: block; }
-    .hns-unit-label { font-size: 0.38rem; letter-spacing: 0.32em; color: var(--grey-dim); display: block; margin-top: 0.2rem; }
-    .hns-sep   { font-family: var(--font-head); font-size: 1rem; color: rgba(255,0,0,0.6); margin-top: 0.1rem; }
+    .hns-num   { font-family: var(--font-head); font-size: 1rem; line-height: 1; color: var(--white); display: block; }
+    .hns-unit-label { font-size: 0.34rem; letter-spacing: 0.28em; color: var(--grey-dim); display: block; margin-top: 0.2rem; }
+    .hns-sep   { font-family: var(--font-head); font-size: 0.8rem; color: rgba(255,0,0,0.6); margin-top: 0.1rem; }
 
     /* Scroll hint */
     .scroll-hint {
@@ -342,9 +342,9 @@
       .events-section { padding: 0 1.4rem; }
       .events-section-inner { padding: 5rem 0 4rem; }
 .hero-next-strip { bottom: 3.8rem; left: 1.4rem; right: 1.4rem; }
-      .hns-num { font-size: 1.4rem; }
-      .hns-sep { font-size: 1.1rem; }
-      .hns-countdown { gap: 0.8rem; }
+      .hns-num { font-size: 0.9rem; }
+      .hns-sep { font-size: 0.7rem; }
+      .hns-countdown { gap: 0.5rem; }
       .ec-inner {
         grid-template-columns: 1fr;
         gap: 0;

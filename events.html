@@ -25,7 +25,7 @@
   <script>if(!sessionStorage.getItem('indicate_auth')){document.documentElement.classList.add('pw-lock')}</script>
 
   <link rel="stylesheet" href="https://use.typekit.net/olg1qlx.css">
-  <link rel="stylesheet" href="shared.css?v=8" />
+  <link rel="stylesheet" href="shared.css?v=9" />
   <style>
     html { height: 100%; overflow: hidden; }
     body {
@@ -58,7 +58,7 @@
     }
     .events-page-title {
       font-family: var(--font-head);
-      font-size: clamp(2.5rem, 7vw, 7rem);
+      font-size: clamp(1.8rem, 4.5vw, 5rem);
       line-height: 0.92; letter-spacing: 0.02em;
       color: var(--white); position: relative; z-index: 2;
     }
@@ -162,7 +162,7 @@
 
     .event-date-display {
       font-family: var(--font-head);
-      font-size: clamp(2rem, 5vw, 5rem);
+      font-size: clamp(1.4rem, 3.2vw, 3.5rem);
       line-height: .95; letter-spacing: .02em;
       color: var(--white); margin-bottom: 1.5rem;
       transition: color 0.3s;
@@ -170,7 +170,7 @@
     .event-screen--past .event-date-display { color: rgba(255,255,255,.5); }
     .event-date-display span { display:block; font-size:.4em; letter-spacing:.12em; color:var(--grey); }
 
-    .event-name { font-family:var(--font-head); font-size:clamp(1.2rem,2.8vw,2.6rem); letter-spacing:.03em; color:var(--white); margin-bottom:.6rem; }
+    .event-name { font-family:var(--font-head); font-size:clamp(0.95rem,2vw,1.9rem); letter-spacing:.02em; color:var(--white); margin-bottom:.6rem; }
     .event-venue { font-size:.65rem; letter-spacing:.25em; color:var(--grey); margin-bottom:.3rem; }
     .event-time  { font-size:.6rem;  letter-spacing:.2em;  color:var(--grey-dim); }
 
@@ -207,7 +207,7 @@
     .lineup-label { font-size:.55rem; letter-spacing:.45em; color:var(--red); display:block; margin-bottom:1.8rem; }
     .lineup-list  { display:flex; flex-direction:column; gap:.2rem; }
     .lineup-artist {
-      font-family:var(--font-head); font-size:clamp(0.9rem,2vw,1.8rem);
+      font-family:var(--font-head); font-size:clamp(0.72rem,1.4vw,1.2rem);
       letter-spacing:.04em; color:var(--white);
       padding:.4rem 0; border-bottom:1px solid rgba(255,255,255,.05);
       opacity:.85; transition:opacity .2s,color .2s;
@@ -547,9 +547,9 @@
     /* ── Ticket slide — alle Viewports ── */
     /* ── Legal links — fixed bottom-right ── */
     .evt-legal-footer {
-      position: fixed; bottom: 1.2rem; right: 1.6rem;
       display: flex; align-items: center; gap: 1rem;
-      z-index: 50; pointer-events: auto;
+      justify-content: center;
+      padding: 2rem 0 3rem;
     }
     .evt-legal-footer a {
       font-family: var(--font-body); font-size: 0.38rem;
@@ -672,7 +672,7 @@
     }
     .evt-mob-lineup-teaser:hover .evt-mob-teaser-name { color: rgba(255,255,255,0.9); }
     .evt-mob-teaser-more {
-      font-family: var(--font-head); font-size: clamp(1.4rem, 5.5vw, 2rem);
+      font-family: var(--font-head); font-size: clamp(0.75rem, 3vw, 1.1rem);
       letter-spacing: 0.05em; color: rgba(255,255,255,0.35);
       display: block; line-height: 1;
     }
@@ -1122,14 +1122,14 @@
       </div>
     </div>
 
-  </div><!-- /events-scroll -->
+    <!-- Legal footer — letzte Zeile im Scroll, kein snap -->
+    <div class="evt-legal-footer">
+      <a href="impressum.html" data-transition>IMPRESSUM</a>
+      <span class="evt-legal-sep"></span>
+      <a href="datenschutz.html" data-transition>DATENSCHUTZ</a>
+    </div>
 
-  <!-- Legal links fixed bottom-right -->
-  <div class="evt-legal-footer">
-    <a href="impressum.html" data-transition>IMPRESSUM</a>
-    <span class="evt-legal-sep"></span>
-    <a href="datenschutz.html" data-transition>DATENSCHUTZ</a>
-  </div>
+  </div><!-- /events-scroll -->
 
   <!-- EVENT DETAIL PANEL — AFTERBURN -->
   <div class="event-detail-panel" id="event-detail-panel">
