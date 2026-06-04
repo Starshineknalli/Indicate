@@ -59,8 +59,8 @@
   --grey:     #888;
   --grey-dim: #333;
   --black:    #000;
-  --font-head: 'Bebas Neue', sans-serif;
-  --font-body: 'Space Mono', monospace;
+  --font-head: 'gear-wide', sans-serif;
+  --font-body: 'gear-wide', sans-serif;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
