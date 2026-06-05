@@ -25,7 +25,7 @@
   <script>if(!sessionStorage.getItem('indicate_auth')){document.documentElement.classList.add('pw-lock')}</script>
 
   <link rel="stylesheet" href="https://use.typekit.net/olg1qlx.css">
-  <link rel="stylesheet" href="shared.css?v=9" />
+  <link rel="stylesheet" href="shared.css?v=10" />
   <style>
     /* ── SCROLL SETUP ── */
     html {
@@ -208,7 +208,7 @@
     .section-title {
       font-family: var(--font-head);
       font-size: clamp(2.2rem, 6vw, 5.5rem);
-      line-height: 1; letter-spacing: 0.02em;
+      line-height: 1.05; letter-spacing: 0.02em;
       color: var(--white);
     }
     .section-title em {
@@ -521,7 +521,6 @@
             </div>
             <div class="ec-right">
               <div class="ec-date-big">09.05</div>
-              <span class="ec-arrow">↗</span>
             </div>
           </div>
         </a>
@@ -536,7 +535,6 @@
             </div>
             <div class="ec-right">
               <div class="ec-date-big">27.09</div>
-              <span class="ec-arrow">↗</span>
             </div>
           </div>
         </a>
@@ -556,6 +554,8 @@
   <script src="shared.js"></script>
   <script src="password.js"></script>
   <script>
+    history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
     (function () {
       // ── GSAP intro ──
       if (typeof gsap !== 'undefined') {
