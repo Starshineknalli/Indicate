@@ -81,7 +81,7 @@ ul { list-style: none; }
 .nav {
   position: fixed;
   top: 0; left: 0; right: 0;
-  z-index: 200;
+  z-index: 300;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -441,7 +441,8 @@ html.pw-lock body { visibility: hidden; }
 .legal-page {
   max-width: 860px;
   margin: 0 auto;
-  padding: 10rem 2.8rem 8rem;
+  padding: 8rem 1.6rem 6rem;
+  overflow-x: hidden;
 }
 .legal-page-title {
   font-family: var(--font-head);
@@ -474,18 +475,22 @@ html.pw-lock body { visibility: hidden; }
 }
 .legal-section-title {
   font-family: var(--font-head);
-  font-size: 1.6rem;
-  letter-spacing: 0.12em;
+  font-size: clamp(0.9rem, 4vw, 1.3rem);
+  letter-spacing: 0.08em;
   color: var(--white);
   margin-bottom: 1.4rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .legal-section p,
 .legal-section address {
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  line-height: 2.2;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  line-height: 2;
   color: rgba(255,255,255,0.55);
   font-style: normal;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .legal-section a {
   color: var(--red);

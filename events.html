@@ -25,7 +25,7 @@
   <script>if(!sessionStorage.getItem('indicate_auth')){document.documentElement.classList.add('pw-lock')}</script>
 
   <link rel="stylesheet" href="https://use.typekit.net/olg1qlx.css">
-  <link rel="stylesheet" href="shared.css?v=11" />
+  <link rel="stylesheet" href="shared.css?v=12" />
   <style>
     html { height: 100%; overflow: hidden; }
     body {
@@ -825,8 +825,8 @@
     }
     .evt-bs-event-name {
       font-family: var(--font-head);
-      font-size: clamp(1.8rem, 7vw, 2.8rem);
-      letter-spacing: 0.05em; color: var(--white);
+      font-size: clamp(1rem, 4vw, 1.6rem);
+      letter-spacing: 0.04em; color: var(--white);
       display: block; margin-bottom: 0.35rem;
     }
     .evt-bs-event-meta { display: flex; gap: 1rem; flex-wrap: wrap; }
@@ -852,20 +852,20 @@
     .evt-ticket-tier:active { background: rgba(255,255,255,0.05); }
     .evt-tier-info { flex: 1; }
     .evt-tier-name {
-      font-family: var(--font-head); font-size: 1.5rem;
-      letter-spacing: 0.06em; color: var(--white); display: block; line-height: 1;
+      font-family: var(--font-head); font-size: clamp(0.85rem, 3vw, 1.1rem);
+      letter-spacing: 0.05em; color: var(--white); display: block; line-height: 1.1;
     }
     .evt-tier-sub {
-      font-size: 0.44rem; letter-spacing: 0.3em;
+      font-size: 0.4rem; letter-spacing: 0.28em;
       color: var(--grey); margin-top: 0.2rem; display: block;
     }
     .evt-tier-price {
-      font-family: var(--font-head); font-size: 1.7rem;
+      font-family: var(--font-head); font-size: clamp(1rem, 4vw, 1.3rem);
       color: var(--white); letter-spacing: 0.02em;
     }
     .evt-tier-currency {
-      font-size: 0.85rem; vertical-align: top;
-      margin-top: 0.35rem; display: inline-block; color: var(--grey);
+      font-size: 0.7rem; vertical-align: top;
+      margin-top: 0.2rem; display: inline-block; color: var(--grey);
     }
     /* ── Photos strip ── */
     .evt-bs-photos {
@@ -914,7 +914,7 @@
       border-color: var(--red);
     }
     .evt-bs-price-num {
-      font-family: var(--font-head); font-size: 2rem;
+      font-family: var(--font-head); font-size: clamp(1rem, 4vw, 1.4rem);
       color: var(--white); line-height: 1; letter-spacing: 0.02em;
     }
     .evt-bs-price-cur {
