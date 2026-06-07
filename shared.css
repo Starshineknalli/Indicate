@@ -129,18 +129,16 @@ ul { list-style: none; }
 /* ── DROPDOWN MENÜ ── */
 .nav-overlay {
   position: fixed;
-  top: 0; left: 0;
+  top: 4.2rem; left: 0;
   z-index: 250;
   width: min(310px, 88vw);
-  padding: 5.8rem 2.6rem 2.4rem 2.8rem;
-  background: rgba(0,0,0,0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-right: 1px solid rgba(255,255,255,0.06);
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  padding: 1.8rem 2.6rem 2.2rem 2.8rem;
+  background: rgba(0,0,0,0.96);
+  border-right: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
   pointer-events: none;
   opacity: 0;
-  transform: translateY(-6px);
+  transform: translateY(-8px);
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 .nav-overlay.open {
