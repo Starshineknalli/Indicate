@@ -131,7 +131,7 @@ ul { list-style: none; }
   position: fixed;
   top: 4.2rem; left: 0;
   z-index: 250;
-  width: min(310px, 88vw);
+  width: min(380px, 96vw);
   padding: 1.8rem 2.6rem 2.2rem 2.8rem;
   background: rgba(0,0,0,0.96);
   border-right: 1px solid rgba(255,255,255,0.07);
@@ -161,6 +161,7 @@ ul { list-style: none; }
   line-height: 1.1;
   padding: 0.5rem 0;
   position: relative;
+  white-space: nowrap;
   transition: color 0.18s ease, padding-left 0.18s ease;
 }
 .nav-overlay-main a:hover { color: var(--white); padding-left: 0.6rem; }
