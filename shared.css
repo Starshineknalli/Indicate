@@ -300,7 +300,6 @@ html.pw-lock body { visibility: hidden; }
 .pw-logo { margin-bottom: 1.8rem; display: flex; justify-content: center; }
 .pw-logo-svg {
   width: clamp(160px, 26vw, 230px); height: clamp(160px, 26vw, 230px); display: block;
-  mix-blend-mode: screen;
   animation: pw-logo-breathe 3s ease-in-out infinite;
 }
 @keyframes pw-logo-breathe {

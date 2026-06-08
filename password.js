@@ -78,6 +78,9 @@
     const CARD = [-Math.PI/2, 0, Math.PI/2, Math.PI];
     const DIAG = [-Math.PI*3/4, -Math.PI/4, Math.PI/4, Math.PI*3/4];
 
+    const logoCanvas = document.createElement('canvas');
+    logoCanvas.width = L; logoCanvas.height = L;
+    const lctx = logoCanvas.getContext('2d');
     const img = new Image();
     img.src = 'photos/INDC-LOGO.png';
 
@@ -158,8 +161,7 @@
     function frame() {
       if (!overlay.isConnected) return;
       ctx.clearRect(0,0,L,L);
-      if (img.complete && img.naturalWidth) { ctx.drawImage(img,0,0,L,L); }
-      else { ctx.fillStyle='#000'; ctx.fillRect(0,0,L,L); }
+      ctx.drawImage(logoCanvas,0,0,L,L);
 
       ctx.globalCompositeOperation='lighter';
       drawCenter(t);
@@ -195,8 +197,18 @@
       t+=0.016;
       requestAnimationFrame(frame);
     }
-    img.onload = frame;
-    if (img.complete && img.naturalWidth > 0) frame();
+    function startPwLoop() {
+      lctx.drawImage(img, 0, 0, L, L);
+      const id = lctx.getImageData(0, 0, L, L);
+      const d = id.data;
+      for (let i = 0; i < d.length; i += 4) {
+        d[i+3] = Math.max(d[i], d[i+1], d[i+2]);
+      }
+      lctx.putImageData(id, 0, 0);
+      frame();
+    }
+    img.onload = startPwLoop;
+    if (img.complete && img.naturalWidth > 0) startPwLoop();
   })();
 
   const input  = overlay.querySelector('#pw-input');

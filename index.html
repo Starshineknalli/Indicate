@@ -122,7 +122,6 @@
     .hero-logo-svg {
       position: relative;
       width: clamp(200px, 28vw, 360px); height: clamp(200px, 28vw, 360px);
-      mix-blend-mode: screen;
       animation:
         logo-glitch-reveal 1.6s ease-out 0.15s both,
         svg-glow           4s ease-in-out 2s infinite;
@@ -624,7 +623,10 @@
     const CARD = [-Math.PI/2, 0, Math.PI/2, Math.PI];
     const DIAG = [-Math.PI*3/4, -Math.PI/4, Math.PI/4, Math.PI*3/4];
 
-    // Load the actual logo PNG as the static base
+    // Offscreen canvas holds the PNG with black stripped out (luminance → alpha)
+    const logoCanvas = document.createElement('canvas');
+    logoCanvas.width = L; logoCanvas.height = L;
+    const lctx = logoCanvas.getContext('2d');
     const img = new Image();
     img.src = 'photos/INDC-LOGO.png';
 
@@ -709,12 +711,8 @@
     function frame() {
       ctx.clearRect(0,0,L,L);
 
-      // 1. Draw the real logo PNG as pixel-perfect base
-      if (img.complete && img.naturalWidth) {
-        ctx.drawImage(img, 0, 0, L, L);
-      } else {
-        ctx.fillStyle='#000'; ctx.fillRect(0,0,L,L);
-      }
+      // 1. Draw logo with transparent background
+      ctx.drawImage(logoCanvas, 0, 0, L, L);
 
       // 2. Additive glow effects — lighter blending adds on top of the logo
       ctx.globalCompositeOperation = 'lighter';
@@ -773,6 +771,14 @@
     function startLoop() {
       if (running) return;
       running = true;
+      // Preprocess: set alpha = max(r,g,b) so black becomes transparent
+      lctx.drawImage(img, 0, 0, L, L);
+      const id = lctx.getImageData(0, 0, L, L);
+      const d = id.data;
+      for (let i = 0; i < d.length; i += 4) {
+        d[i+3] = Math.max(d[i], d[i+1], d[i+2]);
+      }
+      lctx.putImageData(id, 0, 0);
       frame();
     }
     img.onload = startLoop;
