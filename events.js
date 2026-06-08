@@ -138,6 +138,14 @@
     });
   });
 
+  // ── Artist name formatter — highlights B2B in red ─────────
+  function fmtArtist(name) {
+    return name.replace(/\bB2B\b/g, '<span class="edp-lineup-b2b">B2B</span>');
+  }
+  function fmtArtistBS(name) {
+    return name.replace(/\bB2B\b/g, '<span class="evt-bs-lineup-b2b">B2B</span>');
+  }
+
   // ══════════════════════════════════════════════════════════
   //  EVENT DETAIL PANEL
   // ══════════════════════════════════════════════════════════
@@ -173,7 +181,6 @@
     `;
 
     // Lineup rows — numbered, B2B highlighted in red
-    const fmtArtist = n => n.replace(/\bB2B\b/g, '<span class="edp-lineup-b2b">B2B</span>');
     document.getElementById('edp-lineup').innerHTML = ev.lineup.map((a, i) => `
       <div class="edp-lineup-row">
         <span class="edp-lineup-num">${String(i + 1).padStart(2, '0')}</span>
@@ -384,6 +391,10 @@
     bsSelectedPrice   = null;
     bsSelectedQty     = 1;
 
+    // Hero image
+    const heroImg = document.getElementById('evt-bs-hero-img');
+    if (heroImg) heroImg.src = ev.mainPhoto || '';
+
     bsNameEl.textContent  = ev.name;
     bsVenueEl.textContent = ev.venue;
     bsDateEl.textContent  = ev.date;
@@ -398,18 +409,6 @@
       } else {
         cdEl.innerHTML = '';
       }
-    }
-
-    // Photos — first 3 from gallery
-    const photosEl = document.getElementById('evt-bs-photos');
-    if (photosEl) {
-      const photos = (ev.gallery || []).slice(0, 3);
-      photosEl.innerHTML = photos.map(src => {
-        const isVideo = /\.(mp4|webm|mov)$/i.test(src);
-        return isVideo
-          ? `<video src="${src}" class="evt-bs-photo" autoplay loop muted playsinline></video>`
-          : `<img src="${src}" class="evt-bs-photo" alt="" loading="lazy">`;
-      }).join('');
     }
 
     // Upcoming-Event → PWYW + Anzahl-Selektor
@@ -476,7 +475,7 @@
         ${ev.lineup.map((a, i) => `
           <div class="evt-bs-lineup-item">
             <span class="evt-bs-lineup-num">0${i + 1}</span>
-            <span class="evt-bs-lineup-name">${a}</span>
+            <span class="evt-bs-lineup-name">${fmtArtistBS(a)}</span>
             <span class="evt-bs-lineup-accent"></span>
           </div>
         `).join('')}

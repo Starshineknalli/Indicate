@@ -1029,6 +1029,71 @@
       font-family: var(--font-head); font-size: 1.7rem; line-height: 1;
       color: var(--white); width: 48px; text-align: center;
     }
+
+    /* ══ BOTTOM SHEET HERO ══ */
+    .evt-bs-panel {
+      max-height: 90vh;
+    }
+    @media (min-width: 601px) {
+      .evt-bs-panel { max-height: 84vh; }
+    }
+    .evt-bs-hero {
+      position: relative; flex-shrink: 0;
+      height: clamp(210px, 36vh, 290px);
+      overflow: hidden; background: #080808;
+    }
+    .evt-bs-hero-img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      filter: grayscale(40%) brightness(0.52) contrast(1.2);
+    }
+    .evt-bs-hero-grad {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 30%, rgba(0,0,0,0.9) 100%),
+        radial-gradient(ellipse at 8% 100%, rgba(120,0,0,0.18) 0%, transparent 55%);
+    }
+    .evt-bs-hero .evt-bs-topbar {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 3;
+      background: transparent; flex-shrink: 0;
+    }
+    .evt-bs-hero-info {
+      position: absolute; bottom: 0; left: 0; right: 0; z-index: 2;
+      padding: 0 1.4rem 1.2rem;
+    }
+    .evt-bs-hero-info .evt-bs-event-name {
+      font-size: clamp(2rem, 7.5vw, 3.5rem);
+      line-height: 0.92; margin-bottom: 0.5rem; display: block;
+    }
+    .evt-bs-hero-meta {
+      display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+    }
+    .evt-bs-hero-meta span {
+      font-family: var(--font-body); font-size: 0.42rem;
+      letter-spacing: 0.26em; color: rgba(255,255,255,0.4);
+    }
+    .evt-bs-hero-sep {
+      width: 1px; height: 7px; background: rgba(255,255,255,0.15);
+      flex-shrink: 0; display: inline-block;
+    }
+
+    /* Countdown bar */
+    .evt-bs-cd-bar {
+      padding: 0.75rem 1.4rem;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      gap: 1.2rem; flex-shrink: 0;
+    }
+    .evt-bs-cd-bar:empty { display: none; }
+
+    /* Lineup upgrade */
+    .evt-bs-lineup-item { padding: 1rem 1.4rem; }
+    .evt-bs-lineup-name {
+      font-size: clamp(1.6rem, 5vw, 3rem);
+    }
+    .evt-bs-lineup-b2b {
+      font-size: 0.58em; letter-spacing: 0.18em;
+      color: var(--red); opacity: 0.8;
+      margin: 0 0.18em; display: inline-block;
+    }
   </style>
 </head>
 <body>
@@ -1214,21 +1279,31 @@
   <div class="evt-bottom-sheet" id="evt-bottom-sheet">
     <div class="evt-bs-backdrop"></div>
     <div class="evt-bs-panel">
-      <div class="evt-bs-topbar">
-        <div class="evt-bs-topbar-spacer"></div>
-        <div class="evt-bs-handle-wrap"><div class="evt-bs-handle"></div></div>
-        <button class="evt-bs-close-btn" id="evt-bs-close-btn">✕</button>
-      </div>
-      <div class="evt-bs-event-info">
-        <span class="evt-bs-event-name" id="evt-bs-name"></span>
-        <div class="evt-bs-event-meta">
-          <span id="evt-bs-venue"></span>
-          <span id="evt-bs-date"></span>
-          <span id="evt-bs-time"></span>
+
+      <!-- Hero: full-bleed image + handle/close overlaid + event title -->
+      <div class="evt-bs-hero">
+        <img id="evt-bs-hero-img" class="evt-bs-hero-img" src="" alt="">
+        <div class="evt-bs-hero-grad"></div>
+        <div class="evt-bs-topbar">
+          <div class="evt-bs-topbar-spacer"></div>
+          <div class="evt-bs-handle-wrap"><div class="evt-bs-handle"></div></div>
+          <button class="evt-bs-close-btn" id="evt-bs-close-btn">✕</button>
         </div>
-        <div class="evt-mob-countdown" id="evt-bs-countdown"></div>
+        <div class="evt-bs-hero-info">
+          <span class="evt-bs-event-name" id="evt-bs-name"></span>
+          <div class="evt-bs-hero-meta">
+            <span id="evt-bs-venue"></span>
+            <span class="evt-bs-hero-sep"></span>
+            <span id="evt-bs-date"></span>
+            <span class="evt-bs-hero-sep"></span>
+            <span id="evt-bs-time"></span>
+          </div>
+        </div>
       </div>
-      <div class="evt-bs-photos" id="evt-bs-photos"></div>
+
+      <!-- Countdown (upcoming events only) -->
+      <div class="evt-mob-countdown evt-bs-cd-bar" id="evt-bs-countdown"></div>
+
       <div class="evt-bs-tabs">
         <button class="evt-bs-tab active" data-tab="tickets">TICKETS</button>
         <button class="evt-bs-tab" data-tab="lineup">LINEUP</button>
