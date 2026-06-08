@@ -677,7 +677,7 @@
       display: block; line-height: 1;
     }
 
-    /* Tap hint */
+    /* Tap hint (kept for potential reuse) */
     .evt-mob-tap-hint {
       display: flex; align-items: center; gap: 0.8rem;
       opacity: 0.2; margin-bottom: 0.6rem;
@@ -689,6 +689,27 @@
       font-family: var(--font-body); font-size: 0.38rem;
       letter-spacing: 0.48em; color: var(--white); flex-shrink: 0;
     }
+
+    /* Artist count tag */
+    .evt-mob-artist-count {
+      display: inline-flex; align-items: center;
+      gap: 0.7rem; padding: 0.3rem 0; margin-bottom: 1.2rem;
+      cursor: pointer; touch-action: manipulation;
+      opacity: 0.45; transition: opacity 0.22s;
+    }
+    .evt-mob-artist-count:hover { opacity: 0.85; }
+    .eac-line {
+      width: 16px; height: 1px; background: var(--red); flex-shrink: 0;
+    }
+    .eac-label {
+      font-family: var(--font-body); font-size: 0.48rem;
+      letter-spacing: 0.44em; color: rgba(255,255,255,0.6);
+    }
+    .eac-arrow {
+      font-size: 0.72rem; color: rgba(255,255,255,0.3);
+      transition: transform 0.2s;
+    }
+    .evt-mob-artist-count:hover .eac-arrow { transform: translateX(3px); }
 
     /* ── Ticket strip ── */
     @keyframes strip-shimmer {

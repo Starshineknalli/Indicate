@@ -514,39 +514,23 @@
       const isSoon   = !ev.isPast && !!screen.querySelector('.event-ticket-btn.soon');
       const isPast   = ev.isPast || screen.classList.contains('event-screen--past');
 
-      // Venue + time on one row
+      // Venue only (time is in the detail/bottom sheet)
       const venueRow = `
         <div class="evt-mob-venue-row">
           <span class="evt-mob-venue">${ev.venue}</span>
-          <span class="evt-mob-venue-sep">·</span>
-          <span class="evt-mob-time">${ev.time}</span>
         </div>`;
 
-      // Lineup teaser — first 2 artists
-      const teaserArtists = ev.lineup.slice(0, 2);
-      const teaserMore    = ev.lineup.length > 2
-        ? `<span class="evt-mob-teaser-more">+${ev.lineup.length - 2} MORE</span>` : '';
-      const lineupTeaser  = `
-        <div class="evt-mob-lineup-teaser" data-lineup-idx="${idx}">
-          ${teaserArtists.map((a, i) => `
-            <div class="evt-mob-teaser-item">
-              <span class="evt-mob-teaser-num">0${i + 1}</span>
-              <span class="evt-mob-teaser-name">${a}</span>
-            </div>`).join('')}
-          ${teaserMore}
-        </div>`;
+      // Artist count tag — clickable, opens bottom sheet lineup tab
+      const artistCount = !isPast ? `
+        <div class="evt-mob-artist-count" data-lineup-idx="${idx}">
+          <span class="eac-line"></span>
+          <span class="eac-label">${ev.lineup.length} ARTISTS</span>
+          <span class="eac-arrow">→</span>
+        </div>` : '';
 
       // Past badge
       const pastBadge = isPast
         ? `<span class="evt-mob-past-badge">ABGESCHLOSSEN</span>` : '';
-
-      // Tap hint
-      const tapHint = `
-        <div class="evt-mob-tap-hint">
-          <span class="evt-mob-tap-line"></span>
-          <span class="evt-mob-tap-text">DETAILS</span>
-          <span class="evt-mob-tap-line"></span>
-        </div>`;
 
       const body = `
         <div class="evt-mob-body">
@@ -556,8 +540,7 @@
           <div class="evt-mob-name">${ev.name}</div>
           ${venueRow}
           ${pastBadge}
-          ${lineupTeaser}
-          ${tapHint}
+          ${artistCount}
         </div>`;
 
       // Ticket strip
@@ -606,8 +589,8 @@
       setInterval(() => updateBgCd(el), 60000); // update every minute
     });
 
-    // Lineup teaser clicks
-    document.querySelectorAll('.evt-mob-lineup-teaser').forEach(el => {
+    // Artist count tag clicks → open bottom sheet on lineup tab
+    document.querySelectorAll('.evt-mob-artist-count').forEach(el => {
       el.addEventListener('click', e => {
         e.stopPropagation();
         openBottomSheet(parseInt(el.dataset.lineupIdx, 10), 'lineup');
