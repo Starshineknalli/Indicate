@@ -172,9 +172,10 @@
       <span class="edp-hero-meta-item">${ev.time}</span>
     `;
 
-    // Lineup rows — alternierende Ausrichtung, keine Zahlen
+    // Lineup rows — numbered, consistent left alignment
     document.getElementById('edp-lineup').innerHTML = ev.lineup.map((a, i) => `
-      <div class="edp-lineup-row ${i % 2 === 0 ? 'edp-lineup-row--left' : 'edp-lineup-row--right'}">
+      <div class="edp-lineup-row">
+        <span class="edp-lineup-num">${String(i + 1).padStart(2, '0')}</span>
         <span class="edp-lineup-name">${a}</span>
         <span class="edp-lineup-sweep"></span>
       </div>
